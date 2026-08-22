@@ -13,7 +13,7 @@ Restart=on-failure
 RestartSec=5
 NoNewPrivileges=yes
 ProtectSystem=strict
-ReadWritePaths=/opt/pdns-panel/panel/data
+ReadWritePaths=/opt/pdns-panel/panel/data /opt/pdns-panel/panel/.env
 
 [Install]
 WantedBy=multi-user.target
