@@ -331,6 +331,10 @@ table.zones th {
   gap: 16px;
 }
 
+.grid.settings-row-2 {
+  margin-top: 16px;
+}
+
 .card {
   background: var(--panel);
   border: 1px solid var(--border);
