@@ -16,7 +16,7 @@ w SQLite (`server/db/schema.sql`), niezależnej od kont systemowych.
 
 Na razie: jedno konto seedowane automatycznie przy pierwszym starcie (gdy
 tabela `users` jest pusta) z `ADMIN_EMAIL`/`ADMIN_PASSWORD` w `.env`
-(domyślnie `panel@24z.eu` / `pass123!`). Zmiana hasła jest **wymuszona po
+(domyślnie `panel@pdnstest.pl` / `pass123!`). Zmiana hasła jest **wymuszona po
 stronie serwera** (`must_change_password`, middleware
 `requirePasswordChanged` blokuje resztę API) — nie tylko w UI.
 
@@ -47,7 +47,7 @@ cd panel
 cp .env.example .env
 npm install
 npm start
-# http://localhost:3000  ->  panel@24z.eu / pass123!  (zmiana hasła wymuszona)
+# http://localhost:3000  ->  panel@pdnstest.pl / pass123!  (zmiana hasła wymuszona)
 ```
 
 ## Wdrożenie (VPS 4, 212.132.118.19)
@@ -59,6 +59,20 @@ sudo panel/scripts/install.sh
 Instaluje Node.js 20 (moduł dnf), tworzy usera systemowego `pdnspanel`,
 kopiuje pliki do `/opt/pdns-panel`, stawia usługę systemd `pdns-panel`.
 `panel/scripts/update.sh` do kolejnych aktualizacji.
+
+Panel nasłuchuje wyłącznie na `127.0.0.1:3000` (zob. `HOST`/`PORT` w `.env`)
+— ruch z internetu ma iść przez reverse proxy. Przykładowy `Caddyfile.example`:
+
+```
+panel.24z.eu {
+    reverse_proxy 127.0.0.1:3000
+}
+```
+
+Skopiuj do `/etc/caddy/Caddyfile` (albo dołącz przez `import` z osobnego
+pliku w `/etc/caddy/conf.d/`), potem `caddy reload --config /etc/caddy/Caddyfile`.
+Caddy sam wystawi certyfikat Let's Encrypt, jeśli DNS `panel.24z.eu` wskazuje
+na ten serwer i porty 80/443 są otwarte.
 
 ## Czego świadomie brakuje (kolejne kroki)
 

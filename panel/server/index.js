@@ -9,13 +9,17 @@ const zonesRouter = require('./routes/zones');
 const db = initDb();
 const app = express();
 
+// Za Caddy (reverse proxy) - potrzebne, zeby express-session widzialo
+// polaczenie jako "secure" na podstawie X-Forwarded-Proto.
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(
   session({
     secret: config.sessionSecret,
     resave: false,
     saveUninitialized: false,
-    cookie: { httpOnly: true, sameSite: 'lax' },
+    cookie: { httpOnly: true, sameSite: 'lax', secure: 'auto' },
   })
 );
 
@@ -23,6 +27,6 @@ app.use('/api/auth', authRouter(db));
 app.use('/api/zones', zonesRouter());
 app.use(express.static(path.join(__dirname, '..', 'web')));
 
-app.listen(config.port, () => {
-  console.log(`pdns-geo panel (szkielet) nasluchuje na porcie ${config.port}`);
+app.listen(config.port, config.host, () => {
+  console.log(`pdns-geo panel (szkielet) nasluchuje na ${config.host}:${config.port}`);
 });
