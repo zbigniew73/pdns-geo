@@ -34,7 +34,12 @@ module.exports = function settingsRouter() {
     const updates = { POWERDNS_API_URL: apiUrl };
     if (apiKey) updates.POWERDNS_API_KEY = apiKey;
 
-    setEnvValues(ENV_PATH, updates);
+    try {
+      setEnvValues(ENV_PATH, updates);
+    } catch (err) {
+      return res.status(500).json({ error: 'env_write_failed', message: err.message });
+    }
+
     config.powerdns.apiUrl = apiUrl;
     if (apiKey) config.powerdns.apiKey = apiKey;
 

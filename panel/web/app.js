@@ -270,8 +270,9 @@ document.getElementById('powerdns-form').addEventListener('submit', async (e) =>
     document.getElementById('powerdns-api-key-hint').hidden = !result.apiKeySet;
     successEl.textContent = t('powerdns_save_success');
     successEl.hidden = false;
-  } catch {
-    errorEl.textContent = t('powerdns_save_error');
+  } catch (err) {
+    const detail = [err.status, err.message].filter(Boolean).join(' ');
+    errorEl.textContent = detail ? `${t('powerdns_save_error')} (${detail})` : t('powerdns_save_error');
     errorEl.hidden = false;
   }
 });
