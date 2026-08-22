@@ -100,7 +100,8 @@ async function api(path, options) {
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const err = new Error(body.error || `http_${res.status}`);
+    const msg = [body.error, body.message].filter(Boolean).join(': ');
+    const err = new Error(msg || `http_${res.status}`);
     err.status = res.status;
     throw err;
   }
