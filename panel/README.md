@@ -23,6 +23,11 @@ stronie serwera** (`must_change_password`, middleware
 Wielu klientów / przypisanie stref do konta — jeszcze nie zaimplementowane,
 schemat `users.role` jest przygotowany pod to na później.
 
+Zalogowany użytkownik może sam zmienić swój e-mail i hasło w zakładce
+**Ustawienia** (lewe menu) — kafelek "Informacje Administratora" (`PATCH
+/api/auth/email`, `POST /api/auth/change-password`, obie wymagają podania
+obecnego hasła), obok kafelek informacyjny z rolą i datą utworzenia konta.
+
 ## Struktura
 
 ```
@@ -54,28 +59,32 @@ npm start
 
 ## Wdrożenie (VPS 4, 212.132.118.19)
 
-**Dwa różne katalogi — nie mylić:**
+`/opt/pdns-panel` to **bezpośrednio klon repo** `pdns-geo` — jeden katalog,
+żadnego osobnego "katalogu źródłowego". Wszystko (pierwsza instalacja i
+każda kolejna aktualizacja) robi się z tej samej lokalizacji.
 
-- **Katalog źródłowy** (klon repo, np. `/root/pdns-geo` albo `~/pdns-geo`) —
-  stąd robisz `git pull` i stąd uruchamiasz `install.sh`/`update.sh`. To
-  Twoja "kopia robocza" repo, sama w sobie NIE jest uruchomiona jako usługa.
-- **Katalog wdrożenia `/opt/pdns-panel`** — tu `install.sh`/`update.sh`
-  kopiują (rsync) pliki z katalogu źródłowego, stąd faktycznie działa usługa
-  systemd `pdns-panel`, tu jest `.env` i baza (`data/panel.db`). Stąd
-  uruchamiasz narzędzia diagnostyczne (`list-users.js`,
-  `reset-admin-password.js` — patrz niżej), bo tylko tu jest prawdziwa,
-  aktualnie używana baza.
-
+**Pierwsza instalacja** (z dowolnego miejsca, np. z `/root`):
 ```bash
-# w katalogu zrodlowym (klon repo)
-git pull
-sudo panel/scripts/install.sh   # pierwsze wdrozenie
-# albo, przy kolejnych aktualizacjach:
+curl -fsSL https://raw.githubusercontent.com/zbigniew73/pdns-geo/main/panel/scripts/install.sh | sudo bash
+```
+albo, jeśli masz już repo sklonowane gdziekolwiek:
+```bash
+sudo panel/scripts/install.sh
+```
+Skrypt sklonuje repo do `/opt/pdns-panel` (jeśli tam jeszcze niczego nie ma),
+zainstaluje Node.js 20, utworzy użytkownika systemowego `pdnspanel` i
+uruchomi usługę `pdns-panel`. **Jeśli `/opt/pdns-panel` już istnieje ze
+starszej wersji tego skryptu** (katalog kopiowany przez rsync, bez git) —
+`install.sh` sam to wykryje, zmigruje do klonu repo i **zachowa** `.env`
+oraz bazę (`panel/data/panel.db`); stary katalog zostaje jako kopia
+zapasowa `/opt/pdns-panel.pre-git-<timestamp>`.
+
+**Kolejne aktualizacje — zawsze z `/opt/pdns-panel`:**
+```bash
+cd /opt/pdns-panel
 sudo panel/scripts/update.sh
 ```
-
-Instaluje Node.js 20 (moduł dnf), tworzy usera systemowego `pdnspanel`,
-kopiuje pliki do `/opt/pdns-panel`, stawia usługę systemd `pdns-panel`.
+(`git pull` w miejscu, `npm install`, restart usługi.)
 
 Panel nasłuchuje wyłącznie na `127.0.0.1:3000` (zob. `HOST`/`PORT` w `.env`)
 — ruch z internetu ma iść przez reverse proxy. Przykładowy `Caddyfile.example`:
@@ -94,7 +103,7 @@ na ten serwer i porty 80/443 są otwarte.
 ## Zablokowany dostęp / reset hasła admina
 
 Jeśli logowanie na domyślne konto nie działa (np. hasło było już kiedyś
-zmienione i zapomniane), na serwerze, w `/opt/pdns-panel`:
+zmienione i zapomniane), na serwerze, w `/opt/pdns-panel/panel`:
 
 ```bash
 # Co faktycznie jest w bazie (e-mail, czy zmiana hasła jest wymuszona)

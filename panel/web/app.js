@@ -59,12 +59,31 @@ document.querySelectorAll('.lang-switch[data-lang]').forEach((el) => {
     applyStaticTranslations();
     updateThemeToggleIcon();
     updateLangSwitchUI();
-    if (!views.dashboard.hidden) loadZones();
+    if (!views.dashboard.hidden && activeTab === 'zones') loadZones();
   });
 });
 
 applyStaticTranslations();
 updateLangSwitchUI();
+
+const tabs = document.querySelectorAll('.tab[data-tab]');
+const contentPanels = {
+  zones: document.getElementById('content-zones'),
+  settings: document.getElementById('content-settings'),
+};
+let activeTab = 'zones';
+
+function switchTab(name) {
+  activeTab = name;
+  tabs.forEach((tb) => tb.classList.toggle('active', tb.dataset.tab === name));
+  Object.keys(contentPanels).forEach((key) => {
+    contentPanels[key].hidden = key !== name;
+  });
+  if (name === 'zones') loadZones();
+  if (name === 'settings') loadSettingsInfo();
+}
+
+tabs.forEach((tb) => tb.addEventListener('click', () => switchTab(tb.dataset.tab)));
 
 async function api(path, options) {
   const res = await fetch(`/api${path}`, {
@@ -107,6 +126,67 @@ async function loadZones() {
   }
 }
 
+async function loadSettingsInfo() {
+  const emailInput = document.getElementById('settings-email');
+  const roleEl = document.getElementById('info-role');
+  const createdEl = document.getElementById('info-created');
+  try {
+    const me = await api('/auth/me');
+    emailInput.value = me.email;
+    roleEl.textContent = me.role;
+    createdEl.textContent = new Date(me.createdAt.replace(' ', 'T') + 'Z').toLocaleString(locale());
+  } catch {
+    // sesja wygasla - checkSession przy nastepnej akcji i tak przekieruje do logowania
+  }
+}
+
+document.getElementById('email-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const newEmail = document.getElementById('settings-email').value;
+  const errorEl = document.getElementById('email-error');
+  const successEl = document.getElementById('email-success');
+  errorEl.hidden = true;
+  successEl.hidden = true;
+  const currentPassword = document.getElementById('settings-email-password').value;
+  try {
+    const result = await api('/auth/email', {
+      method: 'PATCH',
+      body: JSON.stringify({ currentPassword, newEmail }),
+    });
+    userEmailEl.textContent = result.email;
+    document.getElementById('settings-email-password').value = '';
+    successEl.textContent = t('email_success');
+    successEl.hidden = false;
+  } catch (err) {
+    if (err.status === 401) errorEl.textContent = t('email_error_wrong_password');
+    else if (err.status === 409) errorEl.textContent = t('email_error_taken');
+    else errorEl.textContent = t('email_error_generic');
+    errorEl.hidden = false;
+  }
+});
+
+document.getElementById('settings-password-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const currentPassword = document.getElementById('settings-current-password').value;
+  const newPassword = document.getElementById('settings-new-password').value;
+  const errorEl = document.getElementById('settings-password-error');
+  const successEl = document.getElementById('settings-password-success');
+  errorEl.hidden = true;
+  successEl.hidden = true;
+  try {
+    await api('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    e.target.reset();
+    successEl.textContent = t('settings_password_success');
+    successEl.hidden = false;
+  } catch (err) {
+    errorEl.textContent = err.status === 401 ? t('change_password_error_wrong') : t('change_password_error_generic');
+    errorEl.hidden = false;
+  }
+});
+
 async function afterLogin(mustChangePassword, email) {
   userEmailEl.textContent = email;
   if (mustChangePassword) {
@@ -114,7 +194,7 @@ async function afterLogin(mustChangePassword, email) {
     return;
   }
   showView('dashboard');
-  loadZones();
+  switchTab('zones');
 }
 
 async function checkSession() {

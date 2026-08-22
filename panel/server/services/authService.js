@@ -16,4 +16,8 @@ function changePassword(db, userId, newPassword) {
   );
 }
 
-module.exports = { findUserByEmail, verifyPassword, changePassword };
+function changeEmail(db, userId, newEmail) {
+  db.prepare('UPDATE users SET email = ? WHERE id = ?').run(newEmail, userId);
+}
+
+module.exports = { findUserByEmail, verifyPassword, changePassword, changeEmail };

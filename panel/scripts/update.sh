@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# Aktualizuje wdrożony panel (/opt/pdns-panel) z lokalnie sklonowanego repo.
-# Uruchom z repo: sudo panel/scripts/update.sh
+# Aktualizuje wdrozony panel. Uruchom BEZPOSREDNIO z katalogu wdrozenia:
+#   cd /opt/pdns-panel && sudo panel/scripts/update.sh
+# (/opt/pdns-panel to klon repo - skrypt robi git pull w miejscu, potem
+# npm install i restart uslugi. Zadnego osobnego katalogu zrodlowego.)
 set -euo pipefail
 
 if [[ $EUID -ne 0 ]]; then
@@ -9,22 +11,27 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PANEL_SRC_DIR="$(dirname "${SCRIPT_DIR}")"
-TARGET_DIR="${TARGET_DIR:-/opt/pdns-panel}"
+PANEL_DIR="$(dirname "${SCRIPT_DIR}")"
+TARGET_DIR="$(dirname "${PANEL_DIR}")"
 SERVICE_USER="${SERVICE_USER:-pdnspanel}"
 
-echo "==> Synchronizuję pliki do ${TARGET_DIR}"
-rsync -a --delete \
-    --exclude node_modules \
-    --exclude data \
-    --exclude .env \
-    "${PANEL_SRC_DIR}/" "${TARGET_DIR}/"
-chown -R "${SERVICE_USER}:${SERVICE_USER}" "${TARGET_DIR}"
+if [[ ! -d "${TARGET_DIR}/.git" ]]; then
+    echo "Błąd: ${TARGET_DIR} nie jest klonem repo (brak .git)." >&2
+    echo "Uruchom najpierw install.sh - zmigruje starsze wdrożenie automatycznie." >&2
+    exit 1
+fi
+
+echo "==> git pull w ${TARGET_DIR}"
+git -C "${TARGET_DIR}" pull
 
 echo "==> npm install"
-cd "${TARGET_DIR}"
+cd "${PANEL_DIR}"
 sudo -u "${SERVICE_USER}" npm install --omit=dev
 
-echo "==> Restart usługi"
+echo "==> Odświeżam usługę systemd (na wypadek zmian w panel.service.example)"
+cp "${PANEL_DIR}/panel.service.example" /etc/systemd/system/pdns-panel.service
+systemctl daemon-reload
+
+echo "==> Restart"
 systemctl restart pdns-panel
 systemctl status --no-pager pdns-panel

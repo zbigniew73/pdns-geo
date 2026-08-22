@@ -6,14 +6,14 @@ After=network.target
 Type=simple
 User=pdnspanel
 Group=pdnspanel
-WorkingDirectory=/opt/pdns-panel
-EnvironmentFile=/opt/pdns-panel/.env
+WorkingDirectory=/opt/pdns-panel/panel
+EnvironmentFile=/opt/pdns-panel/panel/.env
 ExecStart=/usr/bin/node server/index.js
 Restart=on-failure
 RestartSec=5
 NoNewPrivileges=yes
 ProtectSystem=strict
-ReadWritePaths=/opt/pdns-panel/data
+ReadWritePaths=/opt/pdns-panel/panel/data
 
 [Install]
 WantedBy=multi-user.target

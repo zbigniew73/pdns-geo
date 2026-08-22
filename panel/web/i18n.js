@@ -21,6 +21,7 @@
 
       nav_main: 'Glowne',
       tab_zones: 'Strefy DNS',
+      tab_settings: 'Ustawienia',
 
       zones_title: 'Strefy DNS',
       zones_not_configured: 'Polaczenie z PowerDNS API nie jest jeszcze skonfigurowane.',
@@ -29,6 +30,20 @@
       th_name: 'Nazwa',
       th_type: 'Typ',
       th_serial: 'Serial',
+
+      admin_info_title: 'Informacje Administratora',
+      current_email_label: 'Aktualny e-mail',
+      save_email_btn: 'Zapisz e-mail',
+      email_error_wrong_password: 'Obecne haslo jest nieprawidlowe.',
+      email_error_taken: 'Ten e-mail jest juz uzywany przez inne konto.',
+      email_error_generic: 'Nie udalo sie zmienic e-mail.',
+      email_success: 'E-mail zmieniony.',
+      save_password_btn: 'Zmien haslo',
+      settings_password_success: 'Haslo zmienione.',
+
+      account_info_title: 'Konto',
+      role_label: 'Rola',
+      created_label: 'Utworzono',
     },
     en: {
       login_email_label: 'Email',
@@ -49,6 +64,7 @@
 
       nav_main: 'Main',
       tab_zones: 'DNS zones',
+      tab_settings: 'Settings',
 
       zones_title: 'DNS zones',
       zones_not_configured: 'Connection to the PowerDNS API is not configured yet.',
@@ -57,6 +73,20 @@
       th_name: 'Name',
       th_type: 'Type',
       th_serial: 'Serial',
+
+      admin_info_title: 'Administrator Information',
+      current_email_label: 'Current email',
+      save_email_btn: 'Save email',
+      email_error_wrong_password: 'Current password is incorrect.',
+      email_error_taken: 'This email is already used by another account.',
+      email_error_generic: 'Failed to change email.',
+      email_success: 'Email changed.',
+      save_password_btn: 'Change password',
+      settings_password_success: 'Password changed.',
+
+      account_info_title: 'Account',
+      role_label: 'Role',
+      created_label: 'Created',
     },
   };
 

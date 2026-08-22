@@ -1,5 +1,10 @@
 const express = require('express');
-const { findUserByEmail, verifyPassword, changePassword } = require('../services/authService');
+const {
+  findUserByEmail,
+  verifyPassword,
+  changePassword,
+  changeEmail,
+} = require('../services/authService');
 const { requireAuth } = require('../middleware/requireAuth');
 
 module.exports = function authRouter(db) {
@@ -25,7 +30,13 @@ module.exports = function authRouter(db) {
   });
 
   router.get('/me', requireAuth, (req, res) => {
-    res.json({ email: req.session.email, mustChangePassword: !!req.session.mustChangePassword });
+    const user = findUserByEmail(db, req.session.email);
+    res.json({
+      email: user.email,
+      mustChangePassword: !!req.session.mustChangePassword,
+      role: user.role,
+      createdAt: user.created_at,
+    });
   });
 
   router.post('/change-password', requireAuth, (req, res) => {
@@ -43,6 +54,24 @@ module.exports = function authRouter(db) {
     changePassword(db, user.id, newPassword);
     req.session.mustChangePassword = false;
     res.json({ ok: true });
+  });
+
+  router.patch('/email', requireAuth, (req, res) => {
+    const { currentPassword, newEmail } = req.body || {};
+    if (!currentPassword || !newEmail) {
+      return res.status(400).json({ error: 'missing_fields' });
+    }
+    const user = findUserByEmail(db, req.session.email);
+    if (!verifyPassword(user, currentPassword)) {
+      return res.status(401).json({ error: 'invalid_current_password' });
+    }
+    const existing = findUserByEmail(db, newEmail);
+    if (existing && existing.id !== user.id) {
+      return res.status(409).json({ error: 'email_taken' });
+    }
+    changeEmail(db, user.id, newEmail);
+    req.session.email = newEmail;
+    res.json({ email: newEmail });
   });
 
   return router;
