@@ -19,6 +19,9 @@
       theme_toggle_title: 'Zmien motyw',
       logout_btn: 'Wyloguj',
 
+      nav_main: 'Glowne',
+      tab_zones: 'Strefy DNS',
+
       zones_title: 'Strefy DNS',
       zones_not_configured: 'Polaczenie z PowerDNS API nie jest jeszcze skonfigurowane.',
       zones_empty: 'Brak stref.',
@@ -44,6 +47,9 @@
       theme_toggle_title: 'Toggle theme',
       logout_btn: 'Log out',
 
+      nav_main: 'Main',
+      tab_zones: 'DNS zones',
+
       zones_title: 'DNS zones',
       zones_not_configured: 'Connection to the PowerDNS API is not configured yet.',
       zones_empty: 'No zones.',
@@ -67,6 +73,10 @@
     try {
       localStorage.setItem('panel-lang', lang === 'en' ? 'en' : 'pl');
     } catch (e) {}
+  }
+
+  function locale() {
+    return getLang() === 'en' ? 'en-US' : 'pl-PL';
   }
 
   function t(key, params) {
@@ -102,6 +112,7 @@
     t: t,
     getLang: getLang,
     setLang: setLang,
+    locale: locale,
     applyStaticTranslations: applyStaticTranslations,
   };
 })();

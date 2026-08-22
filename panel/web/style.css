@@ -188,7 +188,50 @@ header h1 { font-size: 16px; margin: 0; }
   justify-content: center;
 }
 
-main.content { flex: 1; padding: 24px; }
+main { flex: 1; display: flex; min-height: 0; }
+
+nav {
+  width: 200px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  padding: 16px 0;
+  background: var(--panel);
+}
+
+.nav-section-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 4px 20px;
+  margin-bottom: 4px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--text);
+  padding: 10px 20px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.tab:hover { background: var(--bg); }
+.tab.active { background: var(--bg); color: var(--accent); font-weight: 600; border-right: 2px solid var(--accent); }
+
+.content { flex: 1; padding: 24px; overflow-y: auto; }
+
+.app-footer {
+  padding: 8px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--mono);
+  text-align: right;
+}
 
 .panel-block {
   background: var(--panel);

@@ -54,13 +54,28 @@ npm start
 
 ## Wdrożenie (VPS 4, 212.132.118.19)
 
+**Dwa różne katalogi — nie mylić:**
+
+- **Katalog źródłowy** (klon repo, np. `/root/pdns-geo` albo `~/pdns-geo`) —
+  stąd robisz `git pull` i stąd uruchamiasz `install.sh`/`update.sh`. To
+  Twoja "kopia robocza" repo, sama w sobie NIE jest uruchomiona jako usługa.
+- **Katalog wdrożenia `/opt/pdns-panel`** — tu `install.sh`/`update.sh`
+  kopiują (rsync) pliki z katalogu źródłowego, stąd faktycznie działa usługa
+  systemd `pdns-panel`, tu jest `.env` i baza (`data/panel.db`). Stąd
+  uruchamiasz narzędzia diagnostyczne (`list-users.js`,
+  `reset-admin-password.js` — patrz niżej), bo tylko tu jest prawdziwa,
+  aktualnie używana baza.
+
 ```bash
-sudo panel/scripts/install.sh
+# w katalogu zrodlowym (klon repo)
+git pull
+sudo panel/scripts/install.sh   # pierwsze wdrozenie
+# albo, przy kolejnych aktualizacjach:
+sudo panel/scripts/update.sh
 ```
 
 Instaluje Node.js 20 (moduł dnf), tworzy usera systemowego `pdnspanel`,
 kopiuje pliki do `/opt/pdns-panel`, stawia usługę systemd `pdns-panel`.
-`panel/scripts/update.sh` do kolejnych aktualizacji.
 
 Panel nasłuchuje wyłącznie na `127.0.0.1:3000` (zob. `HOST`/`PORT` w `.env`)
 — ruch z internetu ma iść przez reverse proxy. Przykładowy `Caddyfile.example`:

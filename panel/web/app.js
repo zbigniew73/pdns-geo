@@ -1,4 +1,4 @@
-const { t, getLang, setLang, applyStaticTranslations } = window.PANEL_I18N;
+const { t, getLang, setLang, locale, applyStaticTranslations } = window.PANEL_I18N;
 
 const views = {
   login: document.getElementById('view-login'),
@@ -7,6 +7,13 @@ const views = {
 };
 const userEmailEl = document.getElementById('user-email');
 const themeToggleBtn = document.getElementById('theme-toggle');
+const footerClockEl = document.getElementById('footer-clock');
+
+function tickClock() {
+  footerClockEl.textContent = new Date().toLocaleString(locale());
+}
+tickClock();
+setInterval(tickClock, 1000);
 
 function showView(name) {
   for (const key of Object.keys(views)) {
