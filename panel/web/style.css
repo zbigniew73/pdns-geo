@@ -150,6 +150,25 @@ header h1 { font-size: 16px; margin: 0; }
   font-size: 13px;
 }
 
+.lang-switch-group {
+  font-size: 12px;
+}
+
+.lang-sep {
+  color: var(--muted);
+}
+
+.lang-switch {
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.lang-switch.active {
+  color: var(--accent);
+  font-weight: 600;
+  cursor: default;
+}
+
 .icon-btn {
   background: transparent;
   border: 1px solid var(--border);

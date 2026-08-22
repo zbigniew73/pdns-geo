@@ -36,6 +36,8 @@ server/
   services/powerdnsApi.js
   middleware/requireAuth.js
 web/                      statyczny frontend (bez frameworka)
+  i18n.js                 slownik PL/EN (wzorowany na cdn-caddy/web/i18n.js)
+  theme-init.js           motyw jasny/ciemny (localStorage), jak w cdn-caddy
 scripts/                  check-os.sh / install.sh / update.sh (jak w scripts/ dla DNS)
 panel.service.example     jednostka systemd
 ```

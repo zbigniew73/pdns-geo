@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>pdns-geo panel</title>
 <script src="theme-init.js"></script>
+<script src="i18n.js"></script>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -13,27 +14,27 @@
   <div class="login-box">
     <h1>pdns-geo panel</h1>
     <form id="login-form">
-      <label for="login-email">E-mail</label>
+      <label for="login-email" data-i18n="login_email_label">E-mail</label>
       <input type="email" id="login-email" required autocomplete="username" autofocus />
-      <label for="login-password">Haslo</label>
+      <label for="login-password" data-i18n="login_password_label">Haslo</label>
       <input type="password" id="login-password" required autocomplete="current-password" />
       <p class="error-msg" id="login-error" hidden></p>
-      <button type="submit">Zaloguj</button>
+      <button type="submit" data-i18n="login_btn">Zaloguj</button>
     </form>
   </div>
 </div>
 
 <div id="view-change-password" class="screen" hidden>
   <div class="login-box">
-    <h1>Wymagana zmiana hasla</h1>
+    <h1 data-i18n="change_password_title">Wymagana zmiana hasla</h1>
     <form id="change-password-form">
-      <p class="hint">To pierwsze logowanie na tymczasowym hasle — ustaw nowe, zeby kontynuowac.</p>
-      <label for="current-password">Obecne haslo</label>
+      <p class="hint" data-i18n="change_password_hint">To pierwsze logowanie na tymczasowym hasle — ustaw nowe, zeby kontynuowac.</p>
+      <label for="current-password" data-i18n="current_password_label">Obecne haslo</label>
       <input type="password" id="current-password" required autocomplete="current-password" />
-      <label for="new-password">Nowe haslo (min. 8 znakow)</label>
+      <label for="new-password" data-i18n="new_password_label">Nowe haslo (min. 8 znakow)</label>
       <input type="password" id="new-password" required minlength="8" autocomplete="new-password" />
       <p class="error-msg" id="change-password-error" hidden></p>
-      <button type="submit">Zmien haslo</button>
+      <button type="submit" data-i18n="change_password_btn">Zmien haslo</button>
     </form>
   </div>
 </div>
@@ -50,16 +51,19 @@
     </div>
     <div class="header-actions">
       <span id="user-email" class="user-email"></span>
-      <button class="icon-btn" id="theme-toggle" type="button" title="Zmien motyw"></button>
-      <button class="secondary" id="logout-btn" type="button">Wyloguj</button>
+      <span class="lang-switch-group">
+        <span class="lang-switch" data-lang="pl">PL</span> <span class="lang-sep">|</span> <span class="lang-switch" data-lang="en">EN</span>
+      </span>
+      <button class="icon-btn" id="theme-toggle" type="button" data-i18n-title="theme_toggle_title"></button>
+      <button class="secondary" id="logout-btn" type="button" data-i18n="logout_btn">Wyloguj</button>
     </div>
   </header>
   <main class="content">
     <div class="panel-block">
-      <h2>Strefy DNS</h2>
+      <h2 data-i18n="zones_title">Strefy DNS</h2>
       <p class="empty-state" id="zones-status"></p>
       <table class="zones" id="zones-table" hidden>
-        <thead><tr><th>Nazwa</th><th>Typ</th><th>Serial</th></tr></thead>
+        <thead><tr><th data-i18n="th_name">Nazwa</th><th data-i18n="th_type">Typ</th><th data-i18n="th_serial">Serial</th></tr></thead>
         <tbody id="zones-body"></tbody>
       </table>
     </div>

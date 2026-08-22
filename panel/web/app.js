@@ -1,3 +1,5 @@
+const { t, getLang, setLang, applyStaticTranslations } = window.PANEL_I18N;
+
 const views = {
   login: document.getElementById('view-login'),
   changePassword: document.getElementById('view-change-password'),
@@ -36,6 +38,27 @@ themeToggleBtn.addEventListener('click', () => {
 
 updateThemeToggleIcon();
 
+function updateLangSwitchUI() {
+  const lang = getLang();
+  document.querySelectorAll('.lang-switch[data-lang]').forEach((el) => {
+    el.classList.toggle('active', el.dataset.lang === lang);
+  });
+}
+
+document.querySelectorAll('.lang-switch[data-lang]').forEach((el) => {
+  el.addEventListener('click', () => {
+    if (getLang() === el.dataset.lang) return;
+    setLang(el.dataset.lang);
+    applyStaticTranslations();
+    updateThemeToggleIcon();
+    updateLangSwitchUI();
+    if (!views.dashboard.hidden) loadZones();
+  });
+});
+
+applyStaticTranslations();
+updateLangSwitchUI();
+
 async function api(path, options) {
   const res = await fetch(`/api${path}`, {
     headers: { 'Content-Type': 'application/json' },
@@ -57,12 +80,12 @@ async function loadZones() {
   try {
     const result = await api('/zones');
     if (!result.configured) {
-      statusEl.textContent = 'Polaczenie z PowerDNS API nie jest jeszcze skonfigurowane.';
+      statusEl.textContent = t('zones_not_configured');
       table.hidden = true;
       return;
     }
     if (!result.zones.length) {
-      statusEl.textContent = 'Brak stref.';
+      statusEl.textContent = t('zones_empty');
       table.hidden = true;
       return;
     }
@@ -72,7 +95,7 @@ async function loadZones() {
       .join('');
     table.hidden = false;
   } catch (err) {
-    statusEl.textContent = `Blad pobierania stref: ${err.message}`;
+    statusEl.textContent = t('zones_error', { message: err.message });
     table.hidden = true;
   }
 }
@@ -109,7 +132,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     });
     await afterLogin(result.mustChangePassword, result.email);
   } catch {
-    errorEl.textContent = 'Nieprawidlowy e-mail lub haslo.';
+    errorEl.textContent = t('login_error');
     errorEl.hidden = false;
   }
 });
@@ -128,8 +151,7 @@ document.getElementById('change-password-form').addEventListener('submit', async
     showView('dashboard');
     loadZones();
   } catch (err) {
-    errorEl.textContent =
-      err.status === 401 ? 'Obecne haslo jest nieprawidlowe.' : 'Nie udalo sie zmienic hasla.';
+    errorEl.textContent = err.status === 401 ? t('change_password_error_wrong') : t('change_password_error_generic');
     errorEl.hidden = false;
   }
 });
