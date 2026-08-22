@@ -1,0 +1,19 @@
+[Unit]
+Description=pdns-geo panel (szkielet panelu do zarzadzania PowerDNS)
+After=network.target
+
+[Service]
+Type=simple
+User=pdnspanel
+Group=pdnspanel
+WorkingDirectory=/opt/pdns-panel
+EnvironmentFile=/opt/pdns-panel/.env
+ExecStart=/usr/bin/node server/index.js
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/pdns-panel/data
+
+[Install]
+WantedBy=multi-user.target

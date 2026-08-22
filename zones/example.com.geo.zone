@@ -1,0 +1,37 @@
+; Przykładowa strefa demonstrująca GeoDNS przez rekordy Lua (PowerDNS).
+; To NIE jest gotowy plik do załadowania backendem 'bind' — w tym projekcie
+; strefy żyją w PostgreSQL i są zarządzane przez pdnsutil / REST API.
+; Ten plik służy jako referencja/przykład treści rekordów.
+;
+; Załaduj analogiczne dane komendami np.:
+;   pdnsutil create-zone example.com ns1.example.com
+;   pdnsutil add-record example.com www LUA 300 "A \"pickclosest({'203.0.113.10','198.51.100.20','192.0.2.30'})\""
+
+$ORIGIN example.com.
+$TTL 300
+
+@       IN SOA  ns1.example.com. hostmaster.example.com. (
+                    2026082101 ; serial
+                    3600       ; refresh
+                    900        ; retry
+                    1209600    ; expire
+                    300 )      ; minimum
+
+@       IN NS   ns1.example.com.
+@       IN NS   ns2.example.com.
+@       IN NS   ns3.example.com.
+
+ns1     IN A    203.0.113.10   ; VPS 1 (primary)
+ns2     IN A    198.51.100.20  ; VPS 2 (secondary)
+ns3     IN A    192.0.2.30     ; VPS 3 (secondary)
+
+; --- Przykład 1: routing po najbliższym serwerze (geo-distance) ---
+; Każdy z 3 serwerów zwróci IP najbliższe pytającemu resolverowi.
+www     IN LUA  A "pickclosest({'203.0.113.10','198.51.100.20','192.0.2.30'})"
+
+; --- Przykład 2: routing po kontynencie z fallbackiem ---
+app     IN LUA  A "ifcontinent({'EU'}, '198.51.100.20', ifcontinent({'NA'}, '192.0.2.30', '203.0.113.10'))"
+
+; --- Przykład 3: failover z health-checkiem portu (ifportup) ---
+; Sprawdza żywy backend na porcie 443, spada na kolejny w kolejności.
+api     IN LUA  A "ifportup(443, {'203.0.113.10','198.51.100.20'}, {backupSelector='random'})"
