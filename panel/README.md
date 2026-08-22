@@ -34,6 +34,14 @@ statystykami hosta (CPU/RAM/SWAP/DYSK), `GET /api/stats`
 Node, bez zewnętrznych zależności). Odświeżają się przy wejściu na
 zakładkę.
 
+Poniżej dwa kafelki obok siebie: "Strefy DNS" (lista stref z PowerDNS API)
+i "Serwery DNS" — lista ns1 (primary) + ns2/ns3/ns4 (secondary),
+`GET /api/dns-servers`. To NIE pochodzi z PowerDNS API (jeszcze
+niepodłączone) — nazwy/role/adresy IP są ręcznie utrzymywane w
+`panel/server/config/dns-servers.json`. **Uzupełnij tam prawdziwe adresy
+IP** (pole `address` jest puste w szkielecie) — panel pokaże
+"adres nieustawiony", dopóki tego nie zrobisz.
+
 ## Struktura
 
 ```
@@ -44,9 +52,12 @@ server/
   routes/auth.js         login / logout / me / change-password / email
   routes/zones.js        GET /api/zones (proxy do PowerDNS REST API)
   routes/stats.js        GET /api/stats (CPU/RAM/SWAP/DYSK hosta)
+  routes/dnsServers.js   GET /api/dns-servers (lista ns1-ns4 z config/)
+  config/dns-servers.json  reczna lista serwerow NS (nazwa/rola/adres)
   services/authService.js
   services/powerdnsApi.js
   services/systemStats.js
+  services/dnsServers.js
   middleware/requireAuth.js
 web/                      statyczny frontend (bez frameworka)
   i18n.js                 slownik PL/EN (wzorowany na cdn-caddy/web/i18n.js)

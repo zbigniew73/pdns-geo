@@ -1,0 +1,6 @@
+[
+  { "name": "ns1", "role": "primary", "address": "" },
+  { "name": "ns2", "role": "secondary", "address": "" },
+  { "name": "ns3", "role": "secondary", "address": "" },
+  { "name": "ns4", "role": "secondary", "address": "" }
+]

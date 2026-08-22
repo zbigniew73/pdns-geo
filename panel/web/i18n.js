@@ -39,6 +39,13 @@
       th_type: 'Typ',
       th_serial: 'Serial',
 
+      dns_servers_title: 'Serwery DNS',
+      dns_servers_empty: 'Brak skonfigurowanych serwerow (edytuj panel/server/config/dns-servers.json).',
+      dns_servers_error: 'Blad pobierania listy serwerow.',
+      role_primary: 'primary',
+      role_secondary: 'secondary',
+      address_unset: 'adres nieustawiony',
+
       admin_info_title: 'Informacje Administratora',
       current_email_label: 'Aktualny e-mail',
       save_email_btn: 'Zapisz e-mail',
@@ -89,6 +96,13 @@
       th_name: 'Name',
       th_type: 'Type',
       th_serial: 'Serial',
+
+      dns_servers_title: 'DNS Servers',
+      dns_servers_empty: 'No servers configured (edit panel/server/config/dns-servers.json).',
+      dns_servers_error: 'Failed to load the server list.',
+      role_primary: 'primary',
+      role_secondary: 'secondary',
+      address_unset: 'address not set',
 
       admin_info_title: 'Administrator Information',
       current_email_label: 'Current email',

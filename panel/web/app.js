@@ -62,6 +62,7 @@ document.querySelectorAll('.lang-switch[data-lang]').forEach((el) => {
     if (!views.dashboard.hidden && activeTab === 'zones') {
       loadSystemStats();
       loadZones();
+      loadDnsServers();
     }
   });
 });
@@ -85,6 +86,7 @@ function switchTab(name) {
   if (name === 'zones') {
     loadSystemStats();
     loadZones();
+    loadDnsServers();
   }
   if (name === 'settings') loadSettingsInfo();
 }
@@ -188,6 +190,37 @@ async function loadZones() {
   } catch (err) {
     statusEl.textContent = t('zones_error', { message: err.message });
     table.hidden = true;
+  }
+}
+
+async function loadDnsServers() {
+  const statusEl = document.getElementById('dns-servers-status');
+  const listEl = document.getElementById('dns-servers-list');
+  try {
+    const result = await api('/dns-servers');
+    if (!result.servers.length) {
+      statusEl.textContent = t('dns_servers_empty');
+      statusEl.hidden = false;
+      listEl.innerHTML = '';
+      return;
+    }
+    statusEl.hidden = true;
+    listEl.innerHTML = result.servers
+      .map((s) => {
+        const roleLabel = s.role === 'primary' ? t('role_primary') : t('role_secondary');
+        const address = s.address || t('address_unset');
+        return `
+          <div class="server-row">
+            <span class="server-name">${s.name} <span class="badge ${s.role}">${roleLabel}</span></span>
+            <span class="server-address">${address}</span>
+          </div>
+        `;
+      })
+      .join('');
+  } catch {
+    statusEl.textContent = t('dns_servers_error');
+    statusEl.hidden = false;
+    listEl.innerHTML = '';
   }
 }
 
