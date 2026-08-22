@@ -24,6 +24,9 @@ fi
 echo "==> git pull w ${TARGET_DIR}"
 git -C "${TARGET_DIR}" pull
 
+echo "==> Naprawiam wlasciciela plikow pociagnietych przez git pull (root -> ${SERVICE_USER})"
+chown -R "${SERVICE_USER}:${SERVICE_USER}" "${PANEL_DIR}"
+
 echo "==> npm install"
 cd "${PANEL_DIR}"
 sudo -u "${SERVICE_USER}" npm install --omit=dev

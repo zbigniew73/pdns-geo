@@ -51,7 +51,12 @@ PANEL_DIR="${TARGET_DIR}/panel"
 
 if ! id "${SERVICE_USER}" >/dev/null 2>&1; then
     echo "==> Tworzę użytkownika systemowego ${SERVICE_USER}"
-    useradd --system --home-dir "${TARGET_DIR}" --shell /sbin/nologin "${SERVICE_USER}"
+    useradd --system --home-dir "${PANEL_DIR}" --shell /sbin/nologin "${SERVICE_USER}"
+else
+    # Konto moglo zostac utworzone przez starsza wersje tego skryptu z
+    # katalogiem domowym w TARGET_DIR (root repo, bez praw zapisu) - npm
+    # potrzebuje zapisywalnego $HOME na cache (~/.npm).
+    usermod --home "${PANEL_DIR}" "${SERVICE_USER}" 2>/dev/null || true
 fi
 
 if [[ ! -f "${PANEL_DIR}/.env" ]]; then
@@ -60,7 +65,8 @@ if [[ ! -f "${PANEL_DIR}/.env" ]]; then
 fi
 
 mkdir -p "${PANEL_DIR}/data"
-chown -R "${SERVICE_USER}:${SERVICE_USER}" "${PANEL_DIR}/.env" "${PANEL_DIR}/data"
+echo "==> Nadaję ${SERVICE_USER} prawa do ${PANEL_DIR} (npm musi tam pisać node_modules)"
+chown -R "${SERVICE_USER}:${SERVICE_USER}" "${PANEL_DIR}"
 
 echo "==> Instaluję zależności npm (production)"
 cd "${PANEL_DIR}"
