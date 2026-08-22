@@ -76,6 +76,23 @@ pliku w `/etc/caddy/conf.d/`), potem `caddy reload --config /etc/caddy/Caddyfile
 Caddy sam wystawi certyfikat Let's Encrypt, jeśli DNS `panel.24z.eu` wskazuje
 na ten serwer i porty 80/443 są otwarte.
 
+## Zablokowany dostęp / reset hasła admina
+
+Jeśli logowanie na domyślne konto nie działa (np. hasło było już kiedyś
+zmienione i zapomniane), na serwerze, w `/opt/pdns-panel`:
+
+```bash
+# Co faktycznie jest w bazie (e-mail, czy zmiana hasła jest wymuszona)
+node scripts/list-users.js
+
+# Wymuszony reset hasła (nadpisuje, jeśli konto istnieje; tworzy, jeśli nie)
+node scripts/reset-admin-password.js panel@pdnstest.pl 'NoweHaslo123'
+```
+
+`reset-admin-password.js` ustawia hasło bez wymuszania kolejnej zmiany przy
+logowaniu (`must_change_password = 0`) — to narzędzie ratunkowe, nie część
+normalnego flow.
+
 ## Czego świadomie brakuje (kolejne kroki)
 
 - **Połączenie z PowerDNS API**: `install-primary.sh` (warstwa DNS) wystawia
