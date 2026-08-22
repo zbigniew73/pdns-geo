@@ -112,6 +112,26 @@
             <div class="info-row"><span class="info-label" data-i18n="role_label">Rola</span><span id="info-role"></span></div>
             <div class="info-row"><span class="info-label" data-i18n="created_label">Utworzono</span><span id="info-created"></span></div>
           </div>
+          <div class="card">
+            <h2 data-i18n="powerdns_conn_title">Polaczenie z PowerDNS API</h2>
+            <form id="powerdns-form">
+              <label class="field" for="powerdns-address" data-i18n="powerdns_address_label">Adres (ns1)</label>
+              <input class="field-input" type="text" id="powerdns-address" placeholder="np. 10.0.0.1" required />
+              <label class="field" for="powerdns-port" data-i18n="powerdns_port_label">Port</label>
+              <input class="field-input" type="number" id="powerdns-port" placeholder="8081" required />
+              <label class="field" for="powerdns-api-key" data-i18n="powerdns_api_key_label">API Key</label>
+              <input class="field-input" type="password" id="powerdns-api-key" autocomplete="off" />
+              <p class="empty-state" id="powerdns-api-key-hint" hidden></p>
+              <p class="error-msg" id="powerdns-error" hidden></p>
+              <p class="success-msg" id="powerdns-success" hidden></p>
+              <button type="submit" data-i18n="save_btn">Zapisz</button>
+            </form>
+          </div>
+          <div class="card">
+            <h2 data-i18n="powerdns_test_title">Test polaczenia</h2>
+            <p class="empty-state" id="powerdns-test-status"></p>
+            <button type="button" id="powerdns-test-btn" data-i18n="powerdns_test_btn">Testuj polaczenie</button>
+          </div>
         </div>
       </div>
     </div>

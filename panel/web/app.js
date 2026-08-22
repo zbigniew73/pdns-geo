@@ -236,7 +236,62 @@ async function loadSettingsInfo() {
   } catch {
     // sesja wygasla - checkSession przy nastepnej akcji i tak przekieruje do logowania
   }
+  loadPowerdnsSettings();
 }
+
+async function loadPowerdnsSettings() {
+  const hintEl = document.getElementById('powerdns-api-key-hint');
+  try {
+    const result = await api('/settings/powerdns');
+    document.getElementById('powerdns-address').value = result.address;
+    document.getElementById('powerdns-port').value = result.port;
+    hintEl.textContent = t('powerdns_api_key_hint_set');
+    hintEl.hidden = !result.apiKeySet;
+  } catch {
+    // sesja wygasla - jak wyzej
+  }
+}
+
+document.getElementById('powerdns-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const address = document.getElementById('powerdns-address').value;
+  const port = document.getElementById('powerdns-port').value;
+  const apiKey = document.getElementById('powerdns-api-key').value;
+  const errorEl = document.getElementById('powerdns-error');
+  const successEl = document.getElementById('powerdns-success');
+  errorEl.hidden = true;
+  successEl.hidden = true;
+  try {
+    const result = await api('/settings/powerdns', {
+      method: 'PUT',
+      body: JSON.stringify({ address, port, apiKey }),
+    });
+    document.getElementById('powerdns-api-key').value = '';
+    document.getElementById('powerdns-api-key-hint').hidden = !result.apiKeySet;
+    successEl.textContent = t('powerdns_save_success');
+    successEl.hidden = false;
+  } catch {
+    errorEl.textContent = t('powerdns_save_error');
+    errorEl.hidden = false;
+  }
+});
+
+document.getElementById('powerdns-test-btn').addEventListener('click', async () => {
+  const statusEl = document.getElementById('powerdns-test-status');
+  statusEl.textContent = t('powerdns_test_running');
+  try {
+    const result = await api('/settings/powerdns/test', { method: 'POST' });
+    if (result.ok) {
+      statusEl.textContent = t('powerdns_test_ok', { version: result.version || '' });
+    } else if (result.error === 'not_configured') {
+      statusEl.textContent = t('powerdns_test_not_configured');
+    } else {
+      statusEl.textContent = t('powerdns_test_error', { error: result.error });
+    }
+  } catch (err) {
+    statusEl.textContent = t('powerdns_test_error', { error: err.message });
+  }
+});
 
 document.getElementById('email-form').addEventListener('submit', async (e) => {
   e.preventDefault();

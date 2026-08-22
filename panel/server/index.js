@@ -7,6 +7,7 @@ const authRouter = require('./routes/auth');
 const zonesRouter = require('./routes/zones');
 const statsRouter = require('./routes/stats');
 const dnsServersRouter = require('./routes/dnsServers');
+const settingsRouter = require('./routes/settings');
 
 const db = initDb();
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/auth', authRouter(db));
 app.use('/api/zones', zonesRouter());
 app.use('/api/stats', statsRouter());
 app.use('/api/dns-servers', dnsServersRouter());
+app.use('/api/settings', settingsRouter());
 app.use(express.static(path.join(__dirname, '..', 'web')));
 
 app.listen(config.port, config.host, () => {

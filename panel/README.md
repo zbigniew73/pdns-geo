@@ -42,6 +42,17 @@ niepodłączone) — nazwy/role/adresy IP są ręcznie utrzymywane w
 IP** (pole `address` jest puste w szkielecie) — panel pokaże
 "adres nieustawiony", dopóki tego nie zrobisz.
 
+W zakładce **Ustawienia**, drugi rząd, dwa kolejne kafelki:
+- **"Połączenie z PowerDNS API"** — adres/port ns1 + API key. Zapis
+  (`PUT /api/settings/powerdns`) na trwałe aktualizuje `POWERDNS_API_URL`/
+  `POWERDNS_API_KEY` w pliku `.env` (zachowując resztę pliku bez zmian,
+  `server/services/envFile.js`) **i** natychmiast konfigurację w pamięci —
+  bez restartu usługi. Klucz API nigdy nie wraca do przeglądarki (tylko
+  informacja, czy jest ustawiony); zostawienie pola pustego przy zapisie
+  zachowuje dotychczasowy klucz.
+- **"Test połączenia"** — `POST /api/settings/powerdns/test`, odpytuje
+  `GET /api/v1/servers/localhost` na zapisanym adresie i pokazuje wynik.
+
 ## Struktura
 
 ```
@@ -53,11 +64,13 @@ server/
   routes/zones.js        GET /api/zones (proxy do PowerDNS REST API)
   routes/stats.js        GET /api/stats (CPU/RAM/SWAP/DYSK hosta)
   routes/dnsServers.js   GET /api/dns-servers (lista ns1-ns4 z config/)
+  routes/settings.js     GET/PUT /api/settings/powerdns, POST .../test
   config/dns-servers.json  reczna lista serwerow NS (nazwa/rola/adres)
   services/authService.js
   services/powerdnsApi.js
   services/systemStats.js
   services/dnsServers.js
+  services/envFile.js    zapis pojedynczych kluczy do .env w miejscu
   middleware/requireAuth.js
 web/                      statyczny frontend (bez frameworka)
   i18n.js                 slownik PL/EN (wzorowany na cdn-caddy/web/i18n.js)
