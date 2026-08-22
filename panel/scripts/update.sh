@@ -24,8 +24,13 @@ fi
 echo "==> git pull w ${TARGET_DIR}"
 git -C "${TARGET_DIR}" pull
 
-echo "==> Naprawiam wlasciciela plikow pociagnietych przez git pull (root -> ${SERVICE_USER})"
+echo "==> Naprawiam uprawnienia (TARGET_DIR musi byc przechodni, PANEL_DIR nalezec do ${SERVICE_USER})"
+chmod 755 "${TARGET_DIR}"
 chown -R "${SERVICE_USER}:${SERVICE_USER}" "${PANEL_DIR}"
+
+echo "==> Uprawnienia (diagnostyka na wypadek dalszych problemow):"
+ls -ld "${TARGET_DIR}" "${PANEL_DIR}"
+id "${SERVICE_USER}"
 
 echo "==> npm install"
 cd "${PANEL_DIR}"

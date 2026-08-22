@@ -47,6 +47,13 @@ else
 fi
 
 PANEL_DIR="${TARGET_DIR}/panel"
+
+# git clone/mv jako root moze zostawic TARGET_DIR z prawami np. 700 (zalezne
+# od umask) - wtedy SERVICE_USER nie moze nawet wejsc do katalogu, mimo ze
+# PANEL_DIR w srodku jest poprawnie mu przekazany. Wymuszamy przechodnie
+# prawa wejscia (nie zapisu) na kazdym poziomie do PANEL_DIR.
+chmod 755 "${TARGET_DIR}"
+
 "${PANEL_DIR}/scripts/check-os.sh"
 
 if ! id "${SERVICE_USER}" >/dev/null 2>&1; then
@@ -67,6 +74,10 @@ fi
 mkdir -p "${PANEL_DIR}/data"
 echo "==> Nadaję ${SERVICE_USER} prawa do ${PANEL_DIR} (npm musi tam pisać node_modules)"
 chown -R "${SERVICE_USER}:${SERVICE_USER}" "${PANEL_DIR}"
+
+echo "==> Uprawnienia (diagnostyka na wypadek dalszych problemow):"
+ls -ld "${TARGET_DIR}" "${PANEL_DIR}"
+id "${SERVICE_USER}"
 
 echo "==> Instaluję zależności npm (production)"
 cd "${PANEL_DIR}"
