@@ -34,6 +34,11 @@
 
 * { box-sizing: border-box; }
 
+/* Elementy z atrybutem hidden musza zniknac, niezaleznie od tego, co inne
+   reguly (np. .screen, #app) ustawiaja na display - inaczej logowanie,
+   zmiana hasla i dashboard pokazuja sie jednoczesnie. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   background: var(--bg);
@@ -108,7 +113,6 @@ button {
   min-height: 18px;
   margin: -4px 0 8px;
 }
-.error-msg[hidden] { display: none; }
 
 #app { min-height: 100vh; display: flex; flex-direction: column; }
 
