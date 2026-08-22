@@ -28,6 +28,12 @@ Zalogowany użytkownik może sam zmienić swój e-mail i hasło w zakładce
 /api/auth/email`, `POST /api/auth/change-password`, obie wymagają podania
 obecnego hasła), obok kafelek informacyjny z rolą i datą utworzenia konta.
 
+Na głównej zakładce ("Strefy DNS") u góry jest rząd 4 kafelków ze
+statystykami hosta (CPU/RAM/SWAP/DYSK), `GET /api/stats`
+(`server/services/systemStats.js`, wzorowane na cdn-caddy — `os`/`fs` z
+Node, bez zewnętrznych zależności). Odświeżają się przy wejściu na
+zakładkę.
+
 ## Struktura
 
 ```
@@ -35,10 +41,12 @@ server/
   index.js              punkt wejścia (Express)
   config.js              zmienne środowiskowe (.env)
   db.js / db/schema.sql  SQLite (better-sqlite3), migracja + seed admina
-  routes/auth.js         login / logout / me / change-password
+  routes/auth.js         login / logout / me / change-password / email
   routes/zones.js        GET /api/zones (proxy do PowerDNS REST API)
+  routes/stats.js        GET /api/stats (CPU/RAM/SWAP/DYSK hosta)
   services/authService.js
   services/powerdnsApi.js
+  services/systemStats.js
   middleware/requireAuth.js
 web/                      statyczny frontend (bez frameworka)
   i18n.js                 slownik PL/EN (wzorowany na cdn-caddy/web/i18n.js)

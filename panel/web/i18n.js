@@ -23,6 +23,14 @@
       tab_zones: 'Strefy DNS',
       tab_settings: 'Ustawienia',
 
+      cpu: 'CPU',
+      ram: 'RAM',
+      swap: 'SWAP',
+      swap_none: 'brak',
+      disk: 'DYSK',
+      cores_suffix: 'rdzeni',
+      stats_error: 'Blad pobierania statystyk systemu.',
+
       zones_title: 'Strefy DNS',
       zones_not_configured: 'Polaczenie z PowerDNS API nie jest jeszcze skonfigurowane.',
       zones_empty: 'Brak stref.',
@@ -65,6 +73,14 @@
       nav_main: 'Main',
       tab_zones: 'DNS zones',
       tab_settings: 'Settings',
+
+      cpu: 'CPU',
+      ram: 'RAM',
+      swap: 'SWAP',
+      swap_none: 'none',
+      disk: 'DISK',
+      cores_suffix: 'cores',
+      stats_error: 'Failed to load system stats.',
 
       zones_title: 'DNS zones',
       zones_not_configured: 'Connection to the PowerDNS API is not configured yet.',

@@ -59,7 +59,10 @@ document.querySelectorAll('.lang-switch[data-lang]').forEach((el) => {
     applyStaticTranslations();
     updateThemeToggleIcon();
     updateLangSwitchUI();
-    if (!views.dashboard.hidden && activeTab === 'zones') loadZones();
+    if (!views.dashboard.hidden && activeTab === 'zones') {
+      loadSystemStats();
+      loadZones();
+    }
   });
 });
 
@@ -79,7 +82,10 @@ function switchTab(name) {
   Object.keys(contentPanels).forEach((key) => {
     contentPanels[key].hidden = key !== name;
   });
-  if (name === 'zones') loadZones();
+  if (name === 'zones') {
+    loadSystemStats();
+    loadZones();
+  }
   if (name === 'settings') loadSettingsInfo();
 }
 
@@ -97,6 +103,65 @@ async function api(path, options) {
     throw err;
   }
   return body;
+}
+
+function fmtBytes(n) {
+  if (n === null || n === undefined || Number.isNaN(n)) return '-';
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let i = 0;
+  let v = n;
+  while (v >= 1024 && i < units.length - 1) {
+    v /= 1024;
+    i++;
+  }
+  return v.toFixed(1) + ' ' + units[i];
+}
+
+function severity(percent) {
+  if (percent >= 90) return 'critical';
+  if (percent >= 70) return 'warning';
+  return 'good';
+}
+
+function meterTile(label, percent, detail) {
+  const pct = Math.min(100, Math.max(0, percent || 0));
+  return `
+    <div class="stat-tile">
+      <div class="stat-label">${label}</div>
+      <div class="stat-value">${pct}%</div>
+      <div class="meter-track"><div class="meter-fill ${severity(pct)}" style="width:${pct}%"></div></div>
+      ${detail ? `<div class="stat-detail">${detail}</div>` : ''}
+    </div>
+  `;
+}
+
+function valueTile(label, value) {
+  return `
+    <div class="stat-tile">
+      <div class="stat-label">${label}</div>
+      <div class="stat-value" style="font-size:18px;">${value}</div>
+    </div>
+  `;
+}
+
+async function loadSystemStats() {
+  const grid = document.getElementById('system-grid');
+  try {
+    const info = await api('/stats');
+    const cpuDetail = info.cpu ? `${info.cpu.model || '-'} (${info.cpu.cores} ${t('cores_suffix')})` : '';
+    const ramDetail = info.memory ? `${fmtBytes(info.memory.usedBytes)} / ${fmtBytes(info.memory.totalBytes)}` : '';
+    const swapDetail = info.swap ? `${fmtBytes(info.swap.usedBytes)} / ${fmtBytes(info.swap.totalBytes)}` : '';
+    const diskDetail = info.disk ? `${fmtBytes(info.disk.usedBytes)} / ${fmtBytes(info.disk.totalBytes)}` : '';
+
+    grid.innerHTML = `
+      ${meterTile(t('cpu'), info.cpu ? info.cpu.usagePercent : 0, cpuDetail)}
+      ${meterTile(t('ram'), info.memory ? info.memory.usedPercent : 0, ramDetail)}
+      ${info.swap ? meterTile(t('swap'), info.swap.usedPercent, swapDetail) : valueTile(t('swap'), t('swap_none'))}
+      ${info.disk ? meterTile(t('disk'), info.disk.usedPercent, diskDetail) : valueTile(t('disk'), '-')}
+    `;
+  } catch {
+    grid.innerHTML = `<p class="error-msg">${t('stats_error')}</p>`;
+  }
 }
 
 async function loadZones() {
