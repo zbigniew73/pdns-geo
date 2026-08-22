@@ -67,12 +67,12 @@
     <div class="content">
       <div id="content-zones">
         <div class="system-grid" id="system-grid"></div>
-        <div class="grid">
+        <div class="grid" id="zones-overview">
           <div class="card">
             <h2 data-i18n="zones_title">Strefy DNS</h2>
             <p class="empty-state" id="zones-status"></p>
             <table class="zones" id="zones-table" hidden>
-              <thead><tr><th data-i18n="th_name">Nazwa</th><th data-i18n="th_type">Typ</th><th data-i18n="th_serial">Serial</th></tr></thead>
+              <thead><tr><th data-i18n="th_name">Nazwa</th><th data-i18n="th_type">Typ</th><th data-i18n="th_serial">Serial</th><th data-i18n="th_actions">Akcje</th></tr></thead>
               <tbody id="zones-body"></tbody>
             </table>
           </div>
@@ -81,6 +81,50 @@
             <p class="empty-state" id="dns-servers-status" hidden></p>
             <div id="dns-servers-list"></div>
           </div>
+        </div>
+        <div class="card" id="zone-editor" hidden>
+          <div class="zone-editor-header">
+            <h2><span data-i18n="zone_editor_title">Rekordy strefy</span>: <span id="zone-editor-name"></span></h2>
+            <button class="secondary" id="zone-editor-close" type="button" data-i18n="close_btn">Zamknij</button>
+          </div>
+          <p class="empty-state" id="zone-editor-status"></p>
+          <table class="zones" id="zone-records-table" hidden>
+            <thead>
+              <tr>
+                <th data-i18n="th_record_name">Nazwa</th>
+                <th data-i18n="th_type">Typ</th>
+                <th data-i18n="th_ttl">TTL</th>
+                <th data-i18n="th_content">Tresc</th>
+                <th data-i18n="th_actions">Akcje</th>
+              </tr>
+            </thead>
+            <tbody id="zone-records-body"></tbody>
+          </table>
+          <hr />
+          <h2 data-i18n="add_record_title">Dodaj / edytuj rekord</h2>
+          <p class="empty-state" data-i18n="record_fqdn_hint">Nazwa oraz cele rekordow typu CNAME/MX/NS musza konczyc sie kropka, np. www.example.com.</p>
+          <form id="record-form">
+            <label class="field" for="record-name" data-i18n="th_record_name">Nazwa</label>
+            <input class="field-input" type="text" id="record-name" placeholder="www.example.com." required />
+            <label class="field" for="record-type" data-i18n="th_type">Typ</label>
+            <select class="field-input" id="record-type">
+              <option>A</option>
+              <option>AAAA</option>
+              <option>CNAME</option>
+              <option>MX</option>
+              <option>TXT</option>
+              <option>NS</option>
+              <option>SRV</option>
+              <option>CAA</option>
+            </select>
+            <label class="field" for="record-ttl" data-i18n="th_ttl">TTL</label>
+            <input class="field-input" type="number" id="record-ttl" value="3600" required />
+            <label class="field" for="record-content" data-i18n="th_content">Tresc</label>
+            <input class="field-input" type="text" id="record-content" required />
+            <p class="error-msg" id="record-error" hidden></p>
+            <p class="success-msg" id="record-success" hidden></p>
+            <button type="submit" data-i18n="save_record_btn">Zapisz rekord</button>
+          </form>
         </div>
       </div>
       <div id="content-settings" hidden>

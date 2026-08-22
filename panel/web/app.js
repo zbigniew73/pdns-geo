@@ -185,14 +185,133 @@ async function loadZones() {
     }
     statusEl.textContent = '';
     tbody.innerHTML = result.zones
-      .map((z) => `<tr><td>${z.name}</td><td>${z.kind || ''}</td><td>${z.serial || ''}</td></tr>`)
+      .map(
+        (z) => `
+          <tr>
+            <td>${z.name}</td>
+            <td>${z.kind || ''}</td>
+            <td>${z.serial || ''}</td>
+            <td><button type="button" class="secondary zone-edit-btn" data-id="${z.id}" data-name="${z.name}">${t('edit_btn')}</button></td>
+          </tr>
+        `
+      )
       .join('');
     table.hidden = false;
+    tbody.querySelectorAll('.zone-edit-btn').forEach((btn) => {
+      btn.addEventListener('click', () => openZoneEditor(btn.dataset.id, btn.dataset.name));
+    });
   } catch (err) {
     statusEl.textContent = t('zones_error', { message: err.message });
     table.hidden = true;
   }
 }
+
+let currentZoneId = null;
+
+function openZoneEditor(zoneId, zoneName) {
+  currentZoneId = zoneId;
+  document.getElementById('zones-overview').hidden = true;
+  document.getElementById('zone-editor').hidden = false;
+  document.getElementById('zone-editor-name').textContent = zoneName;
+  document.getElementById('record-form').reset();
+  document.getElementById('record-ttl').value = 3600;
+  loadZoneRecords();
+}
+
+function closeZoneEditor() {
+  currentZoneId = null;
+  document.getElementById('zone-editor').hidden = true;
+  document.getElementById('zones-overview').hidden = false;
+}
+
+document.getElementById('zone-editor-close').addEventListener('click', closeZoneEditor);
+
+async function loadZoneRecords() {
+  const statusEl = document.getElementById('zone-editor-status');
+  const table = document.getElementById('zone-records-table');
+  const tbody = document.getElementById('zone-records-body');
+  statusEl.hidden = true;
+  try {
+    const zone = await api(`/zones/${encodeURIComponent(currentZoneId)}`);
+    const rrsets = zone.rrsets || [];
+    if (!rrsets.length) {
+      statusEl.textContent = t('zone_records_empty');
+      statusEl.hidden = false;
+      table.hidden = true;
+      return;
+    }
+    tbody.innerHTML = rrsets
+      .map((rr) => {
+        const firstContent = rr.records && rr.records[0] ? rr.records[0].content : '';
+        const allContent = (rr.records || []).map((r) => r.content).join(', ');
+        return `
+          <tr>
+            <td>${rr.name}</td>
+            <td>${rr.type}</td>
+            <td>${rr.ttl}</td>
+            <td>${allContent}</td>
+            <td>
+              <button type="button" class="secondary record-edit-btn" data-name="${rr.name}" data-type="${rr.type}" data-ttl="${rr.ttl}" data-content="${firstContent}">${t('edit_btn')}</button>
+              <button type="button" class="secondary record-delete-btn" data-name="${rr.name}" data-type="${rr.type}">${t('delete_btn')}</button>
+            </td>
+          </tr>
+        `;
+      })
+      .join('');
+    table.hidden = false;
+
+    tbody.querySelectorAll('.record-edit-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.getElementById('record-name').value = btn.dataset.name;
+        document.getElementById('record-type').value = btn.dataset.type;
+        document.getElementById('record-ttl').value = btn.dataset.ttl;
+        document.getElementById('record-content').value = btn.dataset.content;
+      });
+    });
+    tbody.querySelectorAll('.record-delete-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        if (!confirm(t('delete_record_confirm'))) return;
+        try {
+          await api(`/zones/${encodeURIComponent(currentZoneId)}/rrset`, {
+            method: 'DELETE',
+            body: JSON.stringify({ name: btn.dataset.name, type: btn.dataset.type }),
+          });
+          loadZoneRecords();
+        } catch (err) {
+          alert(`${t('record_error')}: ${err.message}`);
+        }
+      });
+    });
+  } catch (err) {
+    statusEl.textContent = t('zone_records_error', { message: err.message });
+    statusEl.hidden = false;
+    table.hidden = true;
+  }
+}
+
+document.getElementById('record-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('record-name').value;
+  const type = document.getElementById('record-type').value;
+  const ttl = document.getElementById('record-ttl').value;
+  const content = document.getElementById('record-content').value;
+  const errorEl = document.getElementById('record-error');
+  const successEl = document.getElementById('record-success');
+  errorEl.hidden = true;
+  successEl.hidden = true;
+  try {
+    await api(`/zones/${encodeURIComponent(currentZoneId)}/rrset`, {
+      method: 'PUT',
+      body: JSON.stringify({ name, type, ttl, records: [content] }),
+    });
+    successEl.textContent = t('record_saved');
+    successEl.hidden = false;
+    loadZoneRecords();
+  } catch (err) {
+    errorEl.textContent = `${t('record_error')}: ${err.message}`;
+    errorEl.hidden = false;
+  }
+});
 
 async function loadDnsServers() {
   const statusEl = document.getElementById('dns-servers-status');
@@ -210,10 +329,14 @@ async function loadDnsServers() {
       .map((s) => {
         const roleLabel = s.role === 'primary' ? t('role_primary') : t('role_secondary');
         const address = s.address || t('address_unset');
+        const statusBadge = s.status
+          ? `<span class="badge ${s.status}">${t('status_' + s.status)}</span>`
+          : '';
+        const versionText = s.version ? ` <span class="server-address">v${s.version}</span>` : '';
         return `
           <div class="server-row">
-            <span class="server-name">${s.name} <span class="badge ${s.role}">${roleLabel}</span></span>
-            <span class="server-address">${address}</span>
+            <span class="server-name">${s.name} <span class="badge ${s.role}">${roleLabel}</span> ${statusBadge}</span>
+            <span class="server-address">${address}${versionText}</span>
           </div>
         `;
       })

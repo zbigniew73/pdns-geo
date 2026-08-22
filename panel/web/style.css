@@ -279,6 +279,21 @@ table.zones th {
   text-transform: uppercase;
 }
 
+table.zones td .secondary {
+  padding: 4px 8px;
+  font-size: 12px;
+  margin-right: 4px;
+}
+
+.zone-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.zone-editor-header h2 { margin: 0; }
+
 .system-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -424,3 +439,6 @@ table.zones th {
 
 .badge.primary { background: rgba(18, 165, 148, 0.15); color: var(--accent); }
 .badge.secondary { background: rgba(107, 122, 134, 0.15); color: var(--muted); }
+.badge.online { background: rgba(30, 142, 90, 0.15); color: var(--ok); }
+.badge.offline { background: rgba(192, 57, 43, 0.15); color: var(--danger); }
+.badge.unknown { background: rgba(107, 122, 134, 0.15); color: var(--muted); }

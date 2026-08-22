@@ -5,8 +5,8 @@ const { getDnsServers } = require('../services/dnsServers');
 module.exports = function dnsServersRouter() {
   const router = express.Router();
 
-  router.get('/', requireAuth, requirePasswordChanged, (req, res) => {
-    res.json({ servers: getDnsServers() });
+  router.get('/', requireAuth, requirePasswordChanged, async (req, res) => {
+    res.json({ servers: await getDnsServers() });
   });
 
   return router;

@@ -34,13 +34,25 @@ statystykami hosta (CPU/RAM/SWAP/DYSK), `GET /api/stats`
 Node, bez zewnętrznych zależności). Odświeżają się przy wejściu na
 zakładkę.
 
-Poniżej dwa kafelki obok siebie: "Strefy DNS" (lista stref z PowerDNS API)
-i "Serwery DNS" — lista ns1 (primary) + ns2/ns3/ns4 (secondary),
-`GET /api/dns-servers`. To NIE pochodzi z PowerDNS API (jeszcze
-niepodłączone) — nazwy/role/adresy IP są ręcznie utrzymywane w
-`panel/server/config/dns-servers.json`. **Uzupełnij tam prawdziwe adresy
-IP** (pole `address` jest puste w szkielecie) — panel pokaże
-"adres nieustawiony", dopóki tego nie zrobisz.
+Poniżej dwa kafelki obok siebie: "Strefy DNS" (lista stref z PowerDNS API,
+z przyciskiem "Edytuj" przy każdej) i "Serwery DNS" — lista ns1 (primary) +
+ns2/ns3/ns4 (secondary). Nazwy/role/adresy IP są ręcznie utrzymywane w
+`panel/server/config/dns-servers.json` (PowerDNS API nie zna topologii
+całego klastra — każdy serwer ma osobne, niepołączone ze sobą API). **Wpis
+`primary` dostaje żywy status/wersję** z faktycznie podłączonego API (ns1);
+ns2-ns4 zostają statyczne, dopóki nie dojdą osobne połączenia do nich.
+**Uzupełnij prawdziwe adresy IP** w tym pliku (pole `address` puste w
+szkielecie).
+
+Kliknięcie "Edytuj" przy strefie otwiera na pełną szerokość edytor
+rekordów (`GET /api/zones/:zoneId`) z listą rrsetów i przyciskami
+Edytuj/Usuń przy każdym, oraz formularzem dodania/edycji rekordu (nazwa,
+typ, TTL, treść) — `PUT /api/zones/:zoneId/rrset` (PowerDNS `changetype:
+REPLACE`, tworzy lub nadpisuje rrset pod tym samym name+type) i
+`DELETE /api/zones/:zoneId/rrset` (`changetype: DELETE`). Na razie jeden
+rekord (jedna wartość `content`) na rrset — round-robin z wieloma
+wartościami pod tą samą nazwą/typem to możliwe rozszerzenie na później.
+Nazwy oraz cele CNAME/MX/NS muszą kończyć się kropką (konwencja PowerDNS).
 
 W zakładce **Ustawienia**, drugi rząd, dwa kolejne kafelki:
 - **"Połączenie z PowerDNS API"** — adres/port ns1 + API key. Zapis
@@ -61,7 +73,7 @@ server/
   config.js              zmienne środowiskowe (.env)
   db.js / db/schema.sql  SQLite (better-sqlite3), migracja + seed admina
   routes/auth.js         login / logout / me / change-password / email
-  routes/zones.js        GET /api/zones (proxy do PowerDNS REST API)
+  routes/zones.js        GET /api/zones, GET/:zoneId, PUT/DELETE .../rrset
   routes/stats.js        GET /api/stats (CPU/RAM/SWAP/DYSK hosta)
   routes/dnsServers.js   GET /api/dns-servers (lista ns1-ns4 z config/)
   routes/settings.js     GET/PUT /api/settings/powerdns, POST .../test
