@@ -79,9 +79,17 @@ echo "==> Uprawnienia (diagnostyka na wypadek dalszych problemow):"
 ls -ld "${TARGET_DIR}" "${PANEL_DIR}"
 id "${SERVICE_USER}"
 
+# Porzadki po wczesniejszych nieudanych probach: stary cache npm w zlym
+# miejscu (TARGET_DIR zamiast PANEL_DIR, wlasnosc root) i ewentualny
+# czesciowo/mieszanie-wlasciciela zainstalowany node_modules.
+rm -rf "${TARGET_DIR}/.npm" "${PANEL_DIR}/node_modules"
+
 echo "==> Instaluję zależności npm (production)"
 cd "${PANEL_DIR}"
-sudo -u "${SERVICE_USER}" npm install --omit=dev
+# HOME jawnie na PANEL_DIR - nie polegamy na tym, ze sudo respektuje wpis
+# z /etc/passwd (usermod wyzej), zeby npm na pewno pisal cache w miejscu,
+# do ktorego SERVICE_USER ma prawa zapisu.
+sudo -u "${SERVICE_USER}" env HOME="${PANEL_DIR}" npm install --omit=dev
 
 echo "==> Instaluję usługę systemd"
 cp "${PANEL_DIR}/panel.service.example" /etc/systemd/system/pdns-panel.service
