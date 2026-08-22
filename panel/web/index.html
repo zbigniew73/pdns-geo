@@ -4,60 +4,67 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>pdns-geo panel</title>
+<script src="theme-init.js"></script>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<header>
-  <h1>pdns-geo panel</h1>
-  <div id="user-bar" hidden>
-    <span id="user-email"></span>
-    <button id="logout-btn" type="button">Wyloguj</button>
-  </div>
-</header>
 
-<main>
-  <section id="view-login">
+<div id="view-login" class="screen">
+  <div class="login-box">
+    <h1>pdns-geo panel</h1>
     <form id="login-form">
-      <h2>Logowanie</h2>
-      <label>
-        E-mail
-        <input type="email" id="login-email" required autocomplete="username" />
-      </label>
-      <label>
-        Haslo
-        <input type="password" id="login-password" required autocomplete="current-password" />
-      </label>
-      <p class="error" id="login-error" hidden></p>
+      <label for="login-email">E-mail</label>
+      <input type="email" id="login-email" required autocomplete="username" autofocus />
+      <label for="login-password">Haslo</label>
+      <input type="password" id="login-password" required autocomplete="current-password" />
+      <p class="error-msg" id="login-error" hidden></p>
       <button type="submit">Zaloguj</button>
     </form>
-  </section>
+  </div>
+</div>
 
-  <section id="view-change-password" hidden>
+<div id="view-change-password" class="screen" hidden>
+  <div class="login-box">
+    <h1>Wymagana zmiana hasla</h1>
     <form id="change-password-form">
-      <h2>Wymagana zmiana hasla</h2>
-      <p>To pierwsze logowanie na tymczasowym hasle — ustaw nowe haslo, zeby kontynuowac.</p>
-      <label>
-        Obecne haslo
-        <input type="password" id="current-password" required autocomplete="current-password" />
-      </label>
-      <label>
-        Nowe haslo (min. 8 znakow)
-        <input type="password" id="new-password" required minlength="8" autocomplete="new-password" />
-      </label>
-      <p class="error" id="change-password-error" hidden></p>
+      <p class="hint">To pierwsze logowanie na tymczasowym hasle — ustaw nowe, zeby kontynuowac.</p>
+      <label for="current-password">Obecne haslo</label>
+      <input type="password" id="current-password" required autocomplete="current-password" />
+      <label for="new-password">Nowe haslo (min. 8 znakow)</label>
+      <input type="password" id="new-password" required minlength="8" autocomplete="new-password" />
+      <p class="error-msg" id="change-password-error" hidden></p>
       <button type="submit">Zmien haslo</button>
     </form>
-  </section>
+  </div>
+</div>
 
-  <section id="view-dashboard" hidden>
-    <h2>Strefy DNS</h2>
-    <p id="zones-status"></p>
-    <table id="zones-table" hidden>
-      <thead><tr><th>Nazwa</th><th>Typ</th><th>Serial</th></tr></thead>
-      <tbody id="zones-body"></tbody>
-    </table>
-  </section>
-</main>
+<div id="app" hidden>
+  <header>
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="panelIconGrad" x1="0" y1="0" x2="32" y2="32"><stop offset="0" stop-color="#12a594"/><stop offset="1" stop-color="#155e75"/></linearGradient></defs>
+        <rect width="32" height="32" rx="8" fill="url(#panelIconGrad)"/>
+        <text x="16" y="21" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="12" fill="#ffffff">DNS</text>
+      </svg>
+      <h1>pdns-geo panel</h1>
+    </div>
+    <div class="header-actions">
+      <span id="user-email" class="user-email"></span>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Zmien motyw"></button>
+      <button class="secondary" id="logout-btn" type="button">Wyloguj</button>
+    </div>
+  </header>
+  <main class="content">
+    <div class="panel-block">
+      <h2>Strefy DNS</h2>
+      <p class="empty-state" id="zones-status"></p>
+      <table class="zones" id="zones-table" hidden>
+        <thead><tr><th>Nazwa</th><th>Typ</th><th>Serial</th></tr></thead>
+        <tbody id="zones-body"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
 
 <script src="app.js"></script>
 </body>

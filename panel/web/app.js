@@ -1,16 +1,40 @@
 const views = {
   login: document.getElementById('view-login'),
   changePassword: document.getElementById('view-change-password'),
-  dashboard: document.getElementById('view-dashboard'),
+  dashboard: document.getElementById('app'),
 };
-const userBar = document.getElementById('user-bar');
-const userEmail = document.getElementById('user-email');
+const userEmailEl = document.getElementById('user-email');
+const themeToggleBtn = document.getElementById('theme-toggle');
 
 function showView(name) {
   for (const key of Object.keys(views)) {
     views[key].hidden = key !== name;
   }
 }
+
+function currentTheme() {
+  const attr = document.documentElement.getAttribute('data-theme');
+  if (attr === 'light' || attr === 'dark') return attr;
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
+}
+
+function updateThemeToggleIcon() {
+  // Pokazujemy motyw, na ktory kliknięcie przelaczy - ksiezyc gdy jasno, slonko gdy ciemno.
+  themeToggleBtn.textContent = currentTheme() === 'dark' ? '☀️' : '🌙';
+}
+
+themeToggleBtn.addEventListener('click', () => {
+  const next = currentTheme() === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try {
+    localStorage.setItem('panel-theme', next);
+  } catch (e) {}
+  updateThemeToggleIcon();
+});
+
+updateThemeToggleIcon();
 
 async function api(path, options) {
   const res = await fetch(`/api${path}`, {
@@ -54,8 +78,7 @@ async function loadZones() {
 }
 
 async function afterLogin(mustChangePassword, email) {
-  userEmail.textContent = email;
-  userBar.hidden = false;
+  userEmailEl.textContent = email;
   if (mustChangePassword) {
     showView('changePassword');
     return;
@@ -113,7 +136,6 @@ document.getElementById('change-password-form').addEventListener('submit', async
 
 document.getElementById('logout-btn').addEventListener('click', async () => {
   await api('/auth/logout', { method: 'POST' });
-  userBar.hidden = true;
   showView('login');
 });
 
