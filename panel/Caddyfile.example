@@ -7,6 +7,8 @@ panel.domena.eu {
         X-Frame-Options "DENY"
         Referrer-Policy "no-referrer"
         Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+        Cross-Origin-Embedder-Policy "unsafe-none"
+        Cross-Origin-Opener-Policy "same-origin-allow-popups"
     }
 
     reverse_proxy 127.0.0.1:3000
