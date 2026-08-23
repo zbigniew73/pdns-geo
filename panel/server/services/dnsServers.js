@@ -1,7 +1,6 @@
 const dns = require('dns');
 const maxmind = require('maxmind');
 const config = require('../config');
-const powerdnsApi = require('./powerdnsApi');
 
 const PUBLIC_RESOLVER = '8.8.8.8';
 const GEOIP_CITY_DB_PATH = process.env.GEOIP_CITY_DB_PATH || '/usr/share/GeoIP/GeoLite2-City.mmdb';
@@ -96,9 +95,6 @@ async function getDnsServers() {
   }
 
   const primaryHost = nsHosts.find((h) => h.split('.')[0] === 'ns1') || nsHosts[0];
-  const test = config.powerdns.apiUrl
-    ? await powerdnsApi.testConnection()
-    : { ok: false, error: 'not_configured' };
 
   const servers = await Promise.all(
     nsHosts.map(async (host) => {
@@ -107,7 +103,7 @@ async function getDnsServers() {
       const address6 = v6.status === 'fulfilled' ? v6.value[0] : '';
       const isPrimary = host === primaryHost;
 
-      const entry = {
+      return {
         name: host,
         role: isPrimary ? 'primary' : 'secondary',
         address,
@@ -115,10 +111,6 @@ async function getDnsServers() {
         location: await lookupLocation(address || address6),
         status: await checkServerOnline(address, address6, zoneName),
       };
-      if (isPrimary && test.ok) {
-        entry.version = test.version;
-      }
-      return entry;
     })
   );
 

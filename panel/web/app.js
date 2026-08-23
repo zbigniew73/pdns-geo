@@ -359,11 +359,10 @@ async function loadDnsServers() {
         const statusBadge = s.status
           ? `<span class="badge ${s.status}">${t('status_' + s.status)}</span>`
           : '';
-        const versionText = s.version ? ` <span class="server-address">v${s.version}</span>` : '';
         return `
           <div class="server-row">
             <span class="server-name">${s.name}${locationText} <span class="badge ${s.role}">${roleLabel}</span> ${statusBadge}</span>
-            <span class="server-address">${address}${address6Text}${versionText}</span>
+            <span class="server-address">${address}${address6Text}</span>
           </div>
         `;
       })
