@@ -1,5 +1,6 @@
 const { t, getLang, setLang, locale, applyStaticTranslations } = window.PANEL_I18N;
 
+const authShellEl = document.getElementById('auth-shell');
 const views = {
   login: document.getElementById('view-login'),
   changePassword: document.getElementById('view-change-password'),
@@ -8,7 +9,7 @@ const views = {
 };
 const userEmailEl = document.getElementById('user-email');
 const themeToggleBtn = document.getElementById('theme-toggle');
-const footerClockEl = document.getElementById('footer-clock');
+const footerClockEls = document.querySelectorAll('.footer-clock');
 
 function escapeAttr(value) {
   return String(value)
@@ -20,7 +21,8 @@ function escapeAttr(value) {
 }
 
 function tickClock() {
-  footerClockEl.textContent = new Date().toLocaleString(locale());
+  const text = new Date().toLocaleString(locale());
+  footerClockEls.forEach((el) => (el.textContent = text));
 }
 tickClock();
 setInterval(tickClock, 1000);
@@ -29,6 +31,7 @@ function showView(name) {
   for (const key of Object.keys(views)) {
     views[key].hidden = key !== name;
   }
+  authShellEl.hidden = name === 'dashboard';
 }
 
 function currentTheme() {

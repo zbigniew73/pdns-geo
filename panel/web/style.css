@@ -51,8 +51,15 @@ button {
   cursor: pointer;
 }
 
-.screen {
+#auth-shell {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen {
+  flex: 1;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
