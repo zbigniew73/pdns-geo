@@ -103,6 +103,7 @@
           <hr />
           <h2 data-i18n="add_record_title">Dodaj / edytuj rekord</h2>
           <p class="empty-state" data-i18n="record_fqdn_hint">Nazwa oraz cele rekordow typu CNAME/MX/NS musza konczyc sie kropka, np. www.example.com.</p>
+          <p class="empty-state" data-i18n="record_multiline_hint">Jesli rekord ma kilka wartosci (np. NS), wpisz kazda w osobnej linii.</p>
           <form id="record-form">
             <label class="field" for="record-name" data-i18n="th_record_name">Nazwa</label>
             <input class="field-input" type="text" id="record-name" placeholder="www.example.com." required />
@@ -120,7 +121,7 @@
             <label class="field" for="record-ttl" data-i18n="th_ttl">TTL</label>
             <input class="field-input" type="number" id="record-ttl" value="3600" required />
             <label class="field" for="record-content" data-i18n="th_content">Tresc</label>
-            <input class="field-input" type="text" id="record-content" required />
+            <textarea class="field-input" id="record-content" rows="3" required></textarea>
             <p class="error-msg" id="record-error" hidden></p>
             <p class="success-msg" id="record-success" hidden></p>
             <button type="submit" data-i18n="save_record_btn">Zapisz rekord</button>

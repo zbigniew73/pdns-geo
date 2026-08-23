@@ -396,6 +396,11 @@ table.zones td .secondary {
   background: var(--bg);
   color: var(--text);
   font-size: 13px;
+  font-family: inherit;
+}
+
+textarea.field-input {
+  resize: vertical;
 }
 
 .card button {

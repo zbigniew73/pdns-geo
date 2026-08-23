@@ -9,6 +9,15 @@ const userEmailEl = document.getElementById('user-email');
 const themeToggleBtn = document.getElementById('theme-toggle');
 const footerClockEl = document.getElementById('footer-clock');
 
+function escapeAttr(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '&#10;');
+}
+
 function tickClock() {
   footerClockEl.textContent = new Date().toLocaleString(locale());
 }
@@ -242,8 +251,8 @@ async function loadZoneRecords() {
     }
     tbody.innerHTML = rrsets
       .map((rr) => {
-        const firstContent = rr.records && rr.records[0] ? rr.records[0].content : '';
         const allContent = (rr.records || []).map((r) => r.content).join(', ');
+        const editContent = (rr.records || []).map((r) => r.content).join('\n');
         return `
           <tr>
             <td>${rr.name}</td>
@@ -251,7 +260,7 @@ async function loadZoneRecords() {
             <td>${rr.ttl}</td>
             <td>${allContent}</td>
             <td>
-              <button type="button" class="secondary record-edit-btn" data-name="${rr.name}" data-type="${rr.type}" data-ttl="${rr.ttl}" data-content="${firstContent}">${t('edit_btn')}</button>
+              <button type="button" class="secondary record-edit-btn" data-name="${rr.name}" data-type="${rr.type}" data-ttl="${rr.ttl}" data-content="${escapeAttr(editContent)}">${t('edit_btn')}</button>
               <button type="button" class="secondary record-delete-btn" data-name="${rr.name}" data-type="${rr.type}">${t('delete_btn')}</button>
             </td>
           </tr>
@@ -294,7 +303,11 @@ document.getElementById('record-form').addEventListener('submit', async (e) => {
   const name = document.getElementById('record-name').value;
   const type = document.getElementById('record-type').value;
   const ttl = document.getElementById('record-ttl').value;
-  const content = document.getElementById('record-content').value;
+  const records = document
+    .getElementById('record-content')
+    .value.split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
   const errorEl = document.getElementById('record-error');
   const successEl = document.getElementById('record-success');
   errorEl.hidden = true;
@@ -302,7 +315,7 @@ document.getElementById('record-form').addEventListener('submit', async (e) => {
   try {
     await api(`/zones/${encodeURIComponent(currentZoneId)}/rrset`, {
       method: 'PUT',
-      body: JSON.stringify({ name, type, ttl, records: [content] }),
+      body: JSON.stringify({ name, type, ttl, records }),
     });
     successEl.textContent = t('record_saved');
     successEl.hidden = false;
