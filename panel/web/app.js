@@ -400,7 +400,11 @@ document.getElementById('lua-record-form').addEventListener('submit', async (e) 
   e.preventDefault();
   const name = document.getElementById('lua-record-name').value;
   const ttl = document.getElementById('lua-record-ttl').value;
-  const content = document.getElementById('lua-record-content').value;
+  const records = document
+    .getElementById('lua-record-content')
+    .value.split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
   const errorEl = document.getElementById('lua-record-error');
   const successEl = document.getElementById('lua-record-success');
   errorEl.hidden = true;
@@ -408,7 +412,7 @@ document.getElementById('lua-record-form').addEventListener('submit', async (e) 
   try {
     await api(`/zones/${encodeURIComponent(currentZoneId)}/rrset`, {
       method: 'PUT',
-      body: JSON.stringify({ name, type: 'LUA', ttl, records: [content] }),
+      body: JSON.stringify({ name, type: 'LUA', ttl, records }),
     });
     successEl.textContent = t('record_saved');
     successEl.hidden = false;

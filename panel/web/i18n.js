@@ -62,6 +62,7 @@
       record_error: 'Blad zapisu rekordu',
       add_lua_record_title: 'Dodaj / edytuj rekord LUA',
       lua_record_hint: 'Trescia rekordu LUA jest docelowy typ (np. A) plus wyrazenie Lua w cudzyslowie - dokladnie tak jak w przykladach ponizej.',
+      lua_record_dualstack_hint: 'Dla dual-stack (IPv4+IPv6) pod ta sama nazwa wpisz dwie linie w Tresci - jedna zaczynajaca sie od "A ...", druga od "AAAA ..." - to jeden rekord z dwoma wartosciami, nie dwa osobne.',
       delete_record_confirm: 'Usunac ten rekord?',
 
       dns_servers_title: 'Serwery DNS',
@@ -179,6 +180,7 @@
       record_error: 'Failed to save record',
       add_lua_record_title: 'Add / edit LUA record',
       lua_record_hint: 'The content of a LUA record is the target type (e.g. A) plus a Lua expression in quotes - exactly like in the examples below.',
+      lua_record_dualstack_hint: 'For dual-stack (IPv4+IPv6) under the same name, put two lines in Content - one starting with "A ...", the other with "AAAA ..." - that is one record with two values, not two separate ones.',
       delete_record_confirm: 'Delete this record?',
 
       dns_servers_title: 'DNS Servers',
