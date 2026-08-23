@@ -4,7 +4,6 @@ const config = require('../config');
 
 const PUBLIC_RESOLVER = '8.8.8.8';
 const GEOIP_CITY_DB_PATH = process.env.GEOIP_CITY_DB_PATH || '/usr/share/GeoIP/GeoLite2-City.mmdb';
-const GEOIP_ASN_DB_PATH = process.env.GEOIP_ASN_DB_PATH || '/usr/share/GeoIP/GeoLite2-ASN.mmdb';
 
 function normalizeName(name) {
   return String(name || '').toLowerCase().replace(/\.$/, '');
@@ -40,17 +39,6 @@ function getCityLookup() {
   return cityLookupPromise;
 }
 
-let asnLookupPromise = null;
-function getAsnLookup() {
-  if (!asnLookupPromise) {
-    asnLookupPromise = maxmind.open(GEOIP_ASN_DB_PATH).catch((err) => {
-      asnLookupPromise = null;
-      throw err;
-    });
-  }
-  return asnLookupPromise;
-}
-
 async function lookupLocation(ip) {
   if (!ip) return { countryIso: '', location: '' };
 
@@ -63,19 +51,9 @@ async function lookupLocation(ip) {
     timeZone = (result && result.location && result.location.time_zone) || '';
   } catch {}
 
-  let asn = '';
-  try {
-    const lookup = await getAsnLookup();
-    const result = lookup.get(ip);
-    if (result && result.autonomous_system_number) {
-      const org = result.autonomous_system_organization ? ` ${result.autonomous_system_organization}` : '';
-      asn = `AS${result.autonomous_system_number}${org}`;
-    }
-  } catch {}
-
   return {
     countryIso: country,
-    location: [country, timeZone, asn].filter(Boolean).join(' | '),
+    location: [country, timeZone].filter(Boolean).join(' | '),
   };
 }
 
