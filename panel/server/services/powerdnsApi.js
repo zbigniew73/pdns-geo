@@ -80,28 +80,11 @@ async function testConnection() {
   }
 }
 
-// Odpowiednik `pdnsutil increase-serial <zone>` przez API: dobiera aktualny
-// rekord SOA, podbija pole serial o 1 i zapisuje przez PATCH (REPLACE).
-async function increaseSerial(zoneId) {
-  const zone = await getZone(zoneId);
-  const soaRrset = (zone.rrsets || []).find((rr) => rr.type === 'SOA' && rr.name === zone.name);
-  if (!soaRrset || !soaRrset.records || !soaRrset.records[0]) {
-    throw new Error('SOA rrset not found');
-  }
-  const fields = soaRrset.records[0].content.split(' ');
-  fields[2] = String(Number(fields[2]) + 1);
-
-  await patchRRset(zoneId, {
-    name: soaRrset.name,
-    type: 'SOA',
-    ttl: soaRrset.ttl,
-    changetype: 'REPLACE',
-    records: [{ content: fields.join(' '), disabled: false }],
-  });
-}
-
 // Odpowiednik `pdns_control notify <zone>` przez API: wysyla DNS NOTIFY do
-// wszystkich secondary.
+// wszystkich secondary. Podbijanie SOA (dawniej robione tu recznie, jak
+// `pdnsutil increase-serial`) NIE jest juz potrzebne - SOA-EDIT-API=INCREASE
+// jest ustawione na kazdej strefie i w default-soa-edit-api na primary, wiec
+// PowerDNS sam podbija serial przy kazdej zmianie rrsetu przez API.
 async function notifyZone(zoneId) {
   const res = await apiFetch(`/api/v1/servers/localhost/zones/${encodeURIComponent(zoneId)}/notify`, {
     method: 'PUT',
@@ -112,4 +95,4 @@ async function notifyZone(zoneId) {
   }
 }
 
-module.exports = { listZones, testConnection, getZone, patchRRset, increaseSerial, notifyZone };
+module.exports = { listZones, testConnection, getZone, patchRRset, notifyZone };

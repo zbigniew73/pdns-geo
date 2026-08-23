@@ -36,7 +36,6 @@ module.exports = function zonesRouter() {
         changetype: 'REPLACE',
         records: records.map((content) => ({ content, disabled: false })),
       });
-      await powerdnsApi.increaseSerial(req.params.zoneId);
       await powerdnsApi.notifyZone(req.params.zoneId);
       res.json({ ok: true });
     } catch (err) {
@@ -51,7 +50,6 @@ module.exports = function zonesRouter() {
     }
     try {
       await powerdnsApi.patchRRset(req.params.zoneId, { name, type, changetype: 'DELETE' });
-      await powerdnsApi.increaseSerial(req.params.zoneId);
       await powerdnsApi.notifyZone(req.params.zoneId);
       res.json({ ok: true });
     } catch (err) {
