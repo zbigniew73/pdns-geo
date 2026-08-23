@@ -295,6 +295,10 @@ table.zones td .secondary {
   margin-right: 4px;
 }
 
+#zone-editor .card + .card {
+  margin-top: 16px;
+}
+
 .zone-editor-header {
   display: flex;
   align-items: center;
