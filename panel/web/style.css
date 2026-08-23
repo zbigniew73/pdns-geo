@@ -281,8 +281,8 @@ nav {
   display: block;
   width: 100%;
   text-align: left;
-  background: rgba(18, 165, 148, 0.08);
-  border: 1px solid rgba(18, 165, 148, 0.35);
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 8px;
@@ -291,15 +291,19 @@ nav {
 }
 
 .lua-example:hover {
-  background: rgba(18, 165, 148, 0.15);
+  background: rgba(18, 165, 148, 0.1);
   border-color: var(--accent);
 }
 
 .lua-example .lua-example-label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--text);
   margin-bottom: 6px;
+}
+
+.lua-example:hover .lua-example-label {
+  color: var(--accent);
 }
 
 .lua-example .lua-example-code {
