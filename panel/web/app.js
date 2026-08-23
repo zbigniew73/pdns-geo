@@ -361,11 +361,11 @@ async function loadDnsServers() {
         const roleLabel = s.role === 'primary' ? t('role_primary') : t('role_secondary');
         const address = s.address || t('address_unset');
         const address6Text = s.address6 ? ` / ${s.address6}` : '';
-        const flagImg = s.countryIso
-          ? `<img class="flag-icon" src="/flags/${s.countryIso.toLowerCase()}.svg" alt="" />`
-          : '';
+        const hasFlag = !!s.countryIso;
+        const flagImg = hasFlag ? `<img class="flag-icon" src="/flags/${s.countryIso.toLowerCase()}.svg" alt="" />` : '';
+        const flagSpacer = hasFlag ? ' ' : '';
         const locationText = s.location
-          ? ` <span class="server-address">${flagImg}${flagImg ? ' ' : ''}${s.location}</span>`
+          ? ` <span class="server-address">${flagImg}${flagSpacer}${s.location}</span>`
           : '';
         const statusBadge = s.status
           ? `<span class="badge ${s.status}">${t('status_' + s.status)}</span>`
