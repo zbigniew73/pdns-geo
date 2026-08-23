@@ -6,11 +6,20 @@ const config = require('./config');
 
 const SCHEMA_PATH = path.join(__dirname, 'db', 'schema.sql');
 
+function ensureColumn(db, table, column, definition) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all();
+  if (!cols.some((c) => c.name === column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+
 function initDb() {
   fs.mkdirSync(path.dirname(config.dbPath), { recursive: true });
   const db = new Database(config.dbPath);
   db.pragma('journal_mode = WAL');
   db.exec(fs.readFileSync(SCHEMA_PATH, 'utf8'));
+  ensureColumn(db, 'users', 'pin_hash', 'TEXT');
+  ensureColumn(db, 'users', 'pin_enabled', 'INTEGER NOT NULL DEFAULT 0');
   seedAdminIfEmpty(db);
   return db;
 }

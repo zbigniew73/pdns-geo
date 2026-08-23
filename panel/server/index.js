@@ -31,7 +31,7 @@ app.use('/api/auth', authRouter(db));
 app.use('/api/zones', zonesRouter());
 app.use('/api/stats', statsRouter());
 app.use('/api/dns-servers', dnsServersRouter());
-app.use('/api/settings', settingsRouter());
+app.use('/api/settings', settingsRouter(db));
 app.use(express.static(path.join(__dirname, '..', 'web')));
 
 app.listen(config.port, config.host, () => {

@@ -16,6 +16,11 @@
       change_password_error_wrong: 'Obecne haslo jest nieprawidlowe.',
       change_password_error_generic: 'Nie udalo sie zmienic hasla.',
 
+      pin_title: 'Kod PIN',
+      pin_code_label: 'Kod PIN (4 cyfry)',
+      pin_submit_btn: 'Zatwierdz',
+      pin_error_invalid: 'Nieprawidlowy kod PIN.',
+
       theme_toggle_title: 'Zmien motyw',
       logout_btn: 'Wyloguj',
 
@@ -84,6 +89,18 @@
       role_label: 'Rola',
       created_label: 'Utworzono',
 
+      pin_settings_title: 'Kod PIN przy logowaniu',
+      pin_status_label: 'Status',
+      pin_status_on: 'Wlaczony',
+      pin_status_off: 'Wylaczony',
+      pin_new_code_label: 'Nowy kod PIN (4 cyfry, tylko przy wlaczaniu)',
+      pin_enable_btn: 'Wlacz kod PIN',
+      pin_disable_btn: 'Wylacz kod PIN',
+      pin_save_success: 'Zapisano.',
+      pin_error_wrong_password: 'Obecne haslo jest nieprawidlowe.',
+      pin_error_generic: 'Nie udalo sie zapisac ustawienia PIN.',
+      pin_error_need_password: 'Podaj obecne haslo.',
+
       save_btn: 'Zapisz',
       powerdns_conn_title: 'Polaczenie z PowerDNS API',
       powerdns_address_label: 'Adres (ns1)',
@@ -113,6 +130,11 @@
       change_password_btn: 'Change password',
       change_password_error_wrong: 'Current password is incorrect.',
       change_password_error_generic: 'Failed to change password.',
+
+      pin_title: 'PIN code',
+      pin_code_label: 'PIN code (4 digits)',
+      pin_submit_btn: 'Submit',
+      pin_error_invalid: 'Invalid PIN code.',
 
       theme_toggle_title: 'Toggle theme',
       logout_btn: 'Log out',
@@ -181,6 +203,18 @@
       account_info_title: 'Account',
       role_label: 'Role',
       created_label: 'Created',
+
+      pin_settings_title: 'PIN code at login',
+      pin_status_label: 'Status',
+      pin_status_on: 'Enabled',
+      pin_status_off: 'Disabled',
+      pin_new_code_label: 'New PIN code (4 digits, only when enabling)',
+      pin_enable_btn: 'Enable PIN code',
+      pin_disable_btn: 'Disable PIN code',
+      pin_save_success: 'Saved.',
+      pin_error_wrong_password: 'Current password is incorrect.',
+      pin_error_generic: 'Failed to save PIN setting.',
+      pin_error_need_password: 'Enter your current password.',
 
       save_btn: 'Save',
       powerdns_conn_title: 'PowerDNS API connection',

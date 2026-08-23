@@ -39,6 +39,18 @@
   </div>
 </div>
 
+<div id="view-pin" class="screen" hidden>
+  <div class="login-box">
+    <h1 data-i18n="pin_title">Kod PIN</h1>
+    <form id="pin-form">
+      <label for="pin-code" data-i18n="pin_code_label">Kod PIN (4 cyfry)</label>
+      <input type="password" id="pin-code" inputmode="numeric" pattern="[0-9]*" maxlength="4" required autocomplete="one-time-code" autofocus />
+      <p class="error-msg" id="pin-error" hidden></p>
+      <button type="submit" data-i18n="pin_submit_btn">Zatwierdz</button>
+    </form>
+  </div>
+</div>
+
 <div id="app" hidden>
   <header>
     <div class="brand">
@@ -159,6 +171,20 @@
             <h2 data-i18n="account_info_title">Konto</h2>
             <div class="info-row"><span class="info-label" data-i18n="role_label">Rola</span><span id="info-role"></span></div>
             <div class="info-row"><span class="info-label" data-i18n="created_label">Utworzono</span><span id="info-created"></span></div>
+          </div>
+          <div class="card">
+            <h2 data-i18n="pin_settings_title">Kod PIN przy logowaniu</h2>
+            <div class="info-row"><span class="info-label" data-i18n="pin_status_label">Status</span><span id="pin-status"></span></div>
+            <form id="pin-settings-form">
+              <label class="field" for="pin-settings-password" data-i18n="current_password_label">Obecne haslo</label>
+              <input class="field-input" type="password" id="pin-settings-password" required autocomplete="current-password" />
+              <label class="field" for="pin-settings-code" data-i18n="pin_new_code_label">Nowy kod PIN (4 cyfry, tylko przy wlaczaniu)</label>
+              <input class="field-input" type="password" id="pin-settings-code" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" />
+              <p class="error-msg" id="pin-settings-error" hidden></p>
+              <p class="success-msg" id="pin-settings-success" hidden></p>
+              <button type="submit" id="pin-enable-btn" data-i18n="pin_enable_btn">Wlacz kod PIN</button>
+              <button type="button" id="pin-disable-btn" class="secondary" data-i18n="pin_disable_btn" hidden>Wylacz kod PIN</button>
+            </form>
           </div>
         </div>
         <div class="grid settings-row-2">

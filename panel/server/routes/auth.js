@@ -1,9 +1,11 @@
 const express = require('express');
 const {
   findUserByEmail,
+  findUserById,
   verifyPassword,
   changePassword,
   changeEmail,
+  verifyPin,
 } = require('../services/authService');
 const { requireAuth } = require('../middleware/requireAuth');
 
@@ -19,6 +21,27 @@ module.exports = function authRouter(db) {
     if (!user || !verifyPassword(user, password)) {
       return res.status(401).json({ error: 'invalid_credentials' });
     }
+    if (user.pin_enabled) {
+      req.session.pendingPinUserId = user.id;
+      return res.json({ pinRequired: true });
+    }
+    req.session.userId = user.id;
+    req.session.email = user.email;
+    req.session.mustChangePassword = !!user.must_change_password;
+    res.json({ pinRequired: false, email: user.email, mustChangePassword: !!user.must_change_password });
+  });
+
+  router.post('/verify-pin', (req, res) => {
+    const { pin } = req.body || {};
+    const userId = req.session.pendingPinUserId;
+    if (!userId) {
+      return res.status(401).json({ error: 'no_pending_login' });
+    }
+    const user = findUserById(db, userId);
+    if (!user || !verifyPin(user, pin)) {
+      return res.status(401).json({ error: 'invalid_pin' });
+    }
+    delete req.session.pendingPinUserId;
     req.session.userId = user.id;
     req.session.email = user.email;
     req.session.mustChangePassword = !!user.must_change_password;

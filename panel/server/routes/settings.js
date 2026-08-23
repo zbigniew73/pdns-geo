@@ -4,11 +4,37 @@ const { requireAuth, requirePasswordChanged } = require('../middleware/requireAu
 const config = require('../config');
 const { setEnvValues } = require('../services/envFile');
 const powerdnsApi = require('../services/powerdnsApi');
+const { findUserByEmail, verifyPassword, setPin, disablePin } = require('../services/authService');
 
 const ENV_PATH = path.join(process.cwd(), '.env');
 
-module.exports = function settingsRouter() {
+module.exports = function settingsRouter(db) {
   const router = express.Router();
+
+  router.get('/pin', requireAuth, requirePasswordChanged, (req, res) => {
+    const user = findUserByEmail(db, req.session.email);
+    res.json({ enabled: !!user.pin_enabled });
+  });
+
+  router.put('/pin', requireAuth, requirePasswordChanged, (req, res) => {
+    const { currentPassword, enabled, pin } = req.body || {};
+    if (!currentPassword || typeof enabled !== 'boolean') {
+      return res.status(400).json({ error: 'missing_fields' });
+    }
+    const user = findUserByEmail(db, req.session.email);
+    if (!verifyPassword(user, currentPassword)) {
+      return res.status(401).json({ error: 'invalid_current_password' });
+    }
+    if (enabled) {
+      if (!/^\d{4}$/.test(pin || '')) {
+        return res.status(400).json({ error: 'invalid_pin' });
+      }
+      setPin(db, user.id, pin);
+    } else {
+      disablePin(db, user.id);
+    }
+    res.json({ enabled });
+  });
 
   router.get('/powerdns', requireAuth, requirePasswordChanged, (req, res) => {
     let address = '';

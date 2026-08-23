@@ -3,6 +3,7 @@ const { t, getLang, setLang, locale, applyStaticTranslations } = window.PANEL_I1
 const views = {
   login: document.getElementById('view-login'),
   changePassword: document.getElementById('view-change-password'),
+  pin: document.getElementById('view-pin'),
   dashboard: document.getElementById('app'),
 };
 const userEmailEl = document.getElementById('user-email');
@@ -377,6 +378,7 @@ async function loadSettingsInfo() {
     // sesja wygasla - checkSession przy nastepnej akcji i tak przekieruje do logowania
   }
   loadPowerdnsSettings();
+  loadPinSettings();
 }
 
 async function loadPowerdnsSettings() {
@@ -433,6 +435,72 @@ document.getElementById('powerdns-test-btn').addEventListener('click', async () 
     }
   } catch (err) {
     statusEl.textContent = t('powerdns_test_error', { error: err.message });
+  }
+});
+
+async function loadPinSettings() {
+  const statusEl = document.getElementById('pin-status');
+  const enableBtn = document.getElementById('pin-enable-btn');
+  const disableBtn = document.getElementById('pin-disable-btn');
+  const codeInput = document.getElementById('pin-settings-code');
+  try {
+    const result = await api('/settings/pin');
+    statusEl.textContent = result.enabled ? t('pin_status_on') : t('pin_status_off');
+    enableBtn.hidden = result.enabled;
+    disableBtn.hidden = !result.enabled;
+    codeInput.required = !result.enabled;
+  } catch {
+    statusEl.textContent = '';
+  }
+}
+
+document.getElementById('pin-settings-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const currentPassword = document.getElementById('pin-settings-password').value;
+  const pin = document.getElementById('pin-settings-code').value;
+  const errorEl = document.getElementById('pin-settings-error');
+  const successEl = document.getElementById('pin-settings-success');
+  errorEl.hidden = true;
+  successEl.hidden = true;
+  try {
+    await api('/settings/pin', {
+      method: 'PUT',
+      body: JSON.stringify({ currentPassword, enabled: true, pin }),
+    });
+    document.getElementById('pin-settings-password').value = '';
+    document.getElementById('pin-settings-code').value = '';
+    successEl.textContent = t('pin_save_success');
+    successEl.hidden = false;
+    loadPinSettings();
+  } catch (err) {
+    errorEl.textContent = err.status === 401 ? t('pin_error_wrong_password') : t('pin_error_generic');
+    errorEl.hidden = false;
+  }
+});
+
+document.getElementById('pin-disable-btn').addEventListener('click', async () => {
+  const currentPassword = document.getElementById('pin-settings-password').value;
+  const errorEl = document.getElementById('pin-settings-error');
+  const successEl = document.getElementById('pin-settings-success');
+  errorEl.hidden = true;
+  successEl.hidden = true;
+  if (!currentPassword) {
+    errorEl.textContent = t('pin_error_need_password');
+    errorEl.hidden = false;
+    return;
+  }
+  try {
+    await api('/settings/pin', {
+      method: 'PUT',
+      body: JSON.stringify({ currentPassword, enabled: false }),
+    });
+    document.getElementById('pin-settings-password').value = '';
+    successEl.textContent = t('pin_save_success');
+    successEl.hidden = false;
+    loadPinSettings();
+  } catch (err) {
+    errorEl.textContent = err.status === 401 ? t('pin_error_wrong_password') : t('pin_error_generic');
+    errorEl.hidden = false;
   }
 });
 
@@ -513,9 +581,31 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
+    if (result.pinRequired) {
+      document.getElementById('pin-code').value = '';
+      showView('pin');
+      return;
+    }
     await afterLogin(result.mustChangePassword, result.email);
   } catch {
     errorEl.textContent = t('login_error');
+    errorEl.hidden = false;
+  }
+});
+
+document.getElementById('pin-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const pin = document.getElementById('pin-code').value;
+  const errorEl = document.getElementById('pin-error');
+  errorEl.hidden = true;
+  try {
+    const result = await api('/auth/verify-pin', {
+      method: 'POST',
+      body: JSON.stringify({ pin }),
+    });
+    await afterLogin(result.mustChangePassword, result.email);
+  } catch {
+    errorEl.textContent = t('pin_error_invalid');
     errorEl.hidden = false;
   }
 });
