@@ -12,5 +12,6 @@ module.exports = {
   powerdns: {
     apiUrl: process.env.POWERDNS_API_URL || '',
     apiKey: process.env.POWERDNS_API_KEY || '',
+    nsZone: process.env.POWERDNS_NS_ZONE || '',
   },
 };

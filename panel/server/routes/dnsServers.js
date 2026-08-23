@@ -6,7 +6,11 @@ module.exports = function dnsServersRouter() {
   const router = express.Router();
 
   router.get('/', requireAuth, requirePasswordChanged, async (req, res) => {
-    res.json({ servers: await getDnsServers() });
+    try {
+      res.json(await getDnsServers());
+    } catch (err) {
+      res.status(502).json({ error: 'powerdns_unreachable', message: err.message });
+    }
   });
 
   return router;

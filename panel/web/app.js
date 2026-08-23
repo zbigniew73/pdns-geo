@@ -332,7 +332,7 @@ async function loadDnsServers() {
   try {
     const result = await api('/dns-servers');
     if (!result.servers.length) {
-      statusEl.textContent = t('dns_servers_empty');
+      statusEl.textContent = t(result.error ? `dns_servers_${result.error}` : 'dns_servers_empty');
       statusEl.hidden = false;
       listEl.innerHTML = '';
       return;
@@ -343,14 +343,13 @@ async function loadDnsServers() {
         const roleLabel = s.role === 'primary' ? t('role_primary') : t('role_secondary');
         const address = s.address || t('address_unset');
         const address6Text = s.address6 ? ` / ${s.address6}` : '';
-        const locationText = s.location ? ` <span class="server-address">(${s.location})</span>` : '';
         const statusBadge = s.status
           ? `<span class="badge ${s.status}">${t('status_' + s.status)}</span>`
           : '';
         const versionText = s.version ? ` <span class="server-address">v${s.version}</span>` : '';
         return `
           <div class="server-row">
-            <span class="server-name">${s.name}${locationText} <span class="badge ${s.role}">${roleLabel}</span> ${statusBadge}</span>
+            <span class="server-name">${s.name} <span class="badge ${s.role}">${roleLabel}</span> ${statusBadge}</span>
             <span class="server-address">${address}${address6Text}${versionText}</span>
           </div>
         `;
@@ -384,6 +383,7 @@ async function loadPowerdnsSettings() {
     const result = await api('/settings/powerdns');
     document.getElementById('powerdns-address').value = result.address;
     document.getElementById('powerdns-port').value = result.port;
+    document.getElementById('powerdns-zone').value = result.zone || '';
     hintEl.textContent = t('powerdns_api_key_hint_set');
     hintEl.hidden = !result.apiKeySet;
   } catch {
@@ -396,6 +396,7 @@ document.getElementById('powerdns-form').addEventListener('submit', async (e) =>
   const address = document.getElementById('powerdns-address').value;
   const port = document.getElementById('powerdns-port').value;
   const apiKey = document.getElementById('powerdns-api-key').value;
+  const zone = document.getElementById('powerdns-zone').value;
   const errorEl = document.getElementById('powerdns-error');
   const successEl = document.getElementById('powerdns-success');
   errorEl.hidden = true;
@@ -403,7 +404,7 @@ document.getElementById('powerdns-form').addEventListener('submit', async (e) =>
   try {
     const result = await api('/settings/powerdns', {
       method: 'PUT',
-      body: JSON.stringify({ address, port, apiKey }),
+      body: JSON.stringify({ address, port, apiKey, zone }),
     });
     document.getElementById('powerdns-api-key').value = '';
     document.getElementById('powerdns-api-key-hint').hidden = !result.apiKeySet;

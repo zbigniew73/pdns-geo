@@ -1,6 +1,0 @@
-[
-  { "name": "ns1", "role": "primary", "location": "Filadelfia", "address": "74.208.234.113", "address6": "2607:f1c0:f059:dc00::1" },
-  { "name": "ns2", "role": "secondary", "location": "Londyn", "address": "212.227.14.242", "address6": "2a00:da00:f41b:d900::1" },
-  { "name": "ns3", "role": "secondary", "location": "Madryt", "address": "213.165.65.192", "address6": "2001:ba0:22a:2d00::1" },
-  { "name": "ns4", "role": "secondary", "location": "Hanoi", "address": "103.124.94.6" }
-]

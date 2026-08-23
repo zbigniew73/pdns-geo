@@ -22,16 +22,16 @@ module.exports = function settingsRouter() {
         // POWERDNS_API_URL w nietypowym formacie - admin wpisze od nowa
       }
     }
-    res.json({ address, port, apiKeySet: !!config.powerdns.apiKey });
+    res.json({ address, port, apiKeySet: !!config.powerdns.apiKey, zone: config.powerdns.nsZone });
   });
 
   router.put('/powerdns', requireAuth, requirePasswordChanged, (req, res) => {
-    const { address, port, apiKey } = req.body || {};
+    const { address, port, apiKey, zone } = req.body || {};
     if (!address || !port) {
       return res.status(400).json({ error: 'missing_fields' });
     }
     const apiUrl = `http://${address}:${port}`;
-    const updates = { POWERDNS_API_URL: apiUrl };
+    const updates = { POWERDNS_API_URL: apiUrl, POWERDNS_NS_ZONE: zone || '' };
     if (apiKey) updates.POWERDNS_API_KEY = apiKey;
 
     try {
@@ -41,9 +41,10 @@ module.exports = function settingsRouter() {
     }
 
     config.powerdns.apiUrl = apiUrl;
+    config.powerdns.nsZone = zone || '';
     if (apiKey) config.powerdns.apiKey = apiKey;
 
-    res.json({ address, port, apiKeySet: !!config.powerdns.apiKey });
+    res.json({ address, port, apiKeySet: !!config.powerdns.apiKey, zone: config.powerdns.nsZone });
   });
 
   router.post('/powerdns/test', requireAuth, requirePasswordChanged, async (req, res) => {
