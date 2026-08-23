@@ -36,5 +36,5 @@ app.use('/flags', express.static(path.join(__dirname, '..', 'node_modules', 'fla
 app.use(express.static(path.join(__dirname, '..', 'web')));
 
 app.listen(config.port, config.host, () => {
-  console.log(`pdns-geo panel (szkielet) nasluchuje na ${config.host}:${config.port}`);
+  console.log(`Panel do zarzadzania PowerDNS nasluchuje na ${config.host}:${config.port}`);
 });
