@@ -291,7 +291,6 @@ nav {
 }
 
 .lua-example:hover {
-  background: rgba(18, 165, 148, 0.1);
   border-color: var(--accent);
 }
 
@@ -300,10 +299,6 @@ nav {
   font-weight: 600;
   color: var(--text);
   margin-bottom: 6px;
-}
-
-.lua-example:hover .lua-example-label {
-  color: var(--accent);
 }
 
 .lua-example .lua-example-code {
