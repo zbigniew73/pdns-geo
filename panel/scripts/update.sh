@@ -41,9 +41,9 @@ id "${SERVICE_USER}"
 # czesciowo/mieszanie-wlasciciela zainstalowany node_modules.
 rm -rf "${TARGET_DIR}/.npm" "${PANEL_DIR}/node_modules"
 
-echo "==> npm install"
+echo "==> npm ci"
 cd "${PANEL_DIR}"
-sudo -u "${SERVICE_USER}" env HOME="${PANEL_DIR}" npm install --omit=dev
+sudo -u "${SERVICE_USER}" env HOME="${PANEL_DIR}" npm ci --omit=dev
 
 echo "==> Odświeżam usługę systemd (na wypadek zmian w panel.service.example)"
 cp "${PANEL_DIR}/panel.service.example" /etc/systemd/system/pdns-panel.service
