@@ -349,6 +349,21 @@ table.zones th {
   text-transform: uppercase;
 }
 
+#zone-records-table th:nth-child(1),
+#zone-records-table td:nth-child(1) {
+  min-width: 220px;
+}
+
+#zone-records-table th:nth-child(2),
+#zone-records-table td:nth-child(2) {
+  min-width: 130px;
+}
+
+#zone-records-table th:nth-child(3),
+#zone-records-table td:nth-child(3) {
+  min-width: 130px;
+}
+
 table.zones td .secondary {
   padding: 4px 8px;
   font-size: 12px;
