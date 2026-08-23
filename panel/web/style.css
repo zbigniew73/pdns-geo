@@ -454,6 +454,14 @@ textarea.field-input {
   font-size: 12px;
 }
 
+.flag-icon {
+  width: 16px;
+  height: 12px;
+  vertical-align: middle;
+  border-radius: 2px;
+  margin-right: 4px;
+}
+
 .badge {
   display: inline-block;
   padding: 3px 10px;

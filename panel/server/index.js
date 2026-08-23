@@ -32,6 +32,7 @@ app.use('/api/zones', zonesRouter());
 app.use('/api/stats', statsRouter());
 app.use('/api/dns-servers', dnsServersRouter());
 app.use('/api/settings', settingsRouter(db));
+app.use('/flags', express.static(path.join(__dirname, '..', 'node_modules', 'flag-icons', 'flags', '4x3')));
 app.use(express.static(path.join(__dirname, '..', 'web')));
 
 app.listen(config.port, config.host, () => {

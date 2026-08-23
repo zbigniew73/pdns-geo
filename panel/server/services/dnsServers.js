@@ -10,12 +10,6 @@ function normalizeName(name) {
   return String(name || '').toLowerCase().replace(/\.$/, '');
 }
 
-function countryFlag(iso) {
-  if (!/^[A-Za-z]{2}$/.test(iso || '')) return '';
-  const points = [...iso.toUpperCase()].map((c) => 0x1f1e6 + (c.charCodeAt(0) - 65));
-  return String.fromCodePoint(...points);
-}
-
 function makeResolver() {
   const resolver = new dns.promises.Resolver({ timeout: 5000, tries: 1 });
   resolver.setServers([PUBLIC_RESOLVER]);
@@ -58,7 +52,7 @@ function getAsnLookup() {
 }
 
 async function lookupLocation(ip) {
-  if (!ip) return '';
+  if (!ip) return { countryIso: '', location: '' };
 
   let country = '';
   let timeZone = '';
@@ -79,8 +73,10 @@ async function lookupLocation(ip) {
     }
   } catch {}
 
-  const countryText = country ? [countryFlag(country), country].filter(Boolean).join(' ') : '';
-  return [countryText, timeZone, asn].filter(Boolean).join(' | ');
+  return {
+    countryIso: country,
+    location: [country, timeZone, asn].filter(Boolean).join(' | '),
+  };
 }
 
 async function getDnsServers() {
@@ -109,13 +105,15 @@ async function getDnsServers() {
       const address = v4.status === 'fulfilled' ? v4.value[0] : '';
       const address6 = v6.status === 'fulfilled' ? v6.value[0] : '';
       const isPrimary = host === primaryHost;
+      const geo = await lookupLocation(address || address6);
 
       return {
         name: host,
         role: isPrimary ? 'primary' : 'secondary',
         address,
         address6,
-        location: await lookupLocation(address || address6),
+        countryIso: geo.countryIso,
+        location: geo.location,
         status: await checkServerOnline(address, address6, zoneName),
       };
     })
