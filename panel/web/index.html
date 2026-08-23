@@ -164,6 +164,23 @@
               <button type="submit" data-i18n="save_record_btn">Zapisz rekord</button>
             </form>
           </div>
+          <div class="card">
+            <h2 data-i18n="add_lua_record_title">Dodaj / edytuj rekord LUA</h2>
+            <p class="empty-state" data-i18n="record_fqdn_hint">Nazwa oraz cele rekordow typu CNAME/MX/NS musza konczyc sie kropka, np. www.example.com.</p>
+            <p class="empty-state" data-i18n="lua_record_hint">Trescia rekordu LUA jest docelowy typ (np. A) plus wyrazenie Lua w cudzyslowie - dokladnie tak jak w przykladach ponizej.</p>
+            <div id="lua-examples"></div>
+            <form id="lua-record-form">
+              <label class="field" for="lua-record-name" data-i18n="th_record_name">Nazwa</label>
+              <input class="field-input" type="text" id="lua-record-name" placeholder="www.example.com." required />
+              <label class="field" for="lua-record-ttl" data-i18n="th_ttl">TTL</label>
+              <input class="field-input" type="number" id="lua-record-ttl" value="300" required />
+              <label class="field" for="lua-record-content" data-i18n="th_content">Tresc</label>
+              <input class="field-input" type="text" id="lua-record-content" placeholder='A "pickclosest({&#39;203.0.113.10&#39;,&#39;198.51.100.20&#39;})"' required />
+              <p class="error-msg" id="lua-record-error" hidden></p>
+              <p class="success-msg" id="lua-record-success" hidden></p>
+              <button type="submit" data-i18n="save_record_btn">Zapisz rekord</button>
+            </form>
+          </div>
         </div>
       </div>
       <div id="content-settings" hidden>

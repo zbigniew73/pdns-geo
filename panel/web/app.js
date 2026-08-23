@@ -234,6 +234,44 @@ async function loadZones() {
 
 let currentZoneId = null;
 
+const LUA_EXAMPLES = [
+  {
+    label: 'pickclosest - najblizszy serwer (geo-distance)',
+    name: 'www',
+    content: "A \"pickclosest({'203.0.113.10','198.51.100.20','192.0.2.30'})\"",
+  },
+  {
+    label: 'ifcontinent - routing po kontynencie z fallbackiem',
+    name: 'app',
+    content:
+      "A \"ifcontinent({'EU'}, '198.51.100.20', ifcontinent({'NA'}, '192.0.2.30', '203.0.113.10'))\"",
+  },
+  {
+    label: 'ifportup - failover z health-checkiem portu',
+    name: 'api',
+    content: "A \"ifportup(443, {'203.0.113.10','198.51.100.20'}, {backupSelector='random'})\"",
+  },
+];
+
+function renderLuaExamples(zoneName) {
+  const container = document.getElementById('lua-examples');
+  container.innerHTML = LUA_EXAMPLES.map(
+    (ex, i) => `
+      <button type="button" class="lua-example" data-index="${i}">
+        <div class="lua-example-label">${escapeAttr(ex.label)}</div>
+        <div class="lua-example-code">${escapeAttr(ex.name)}.${escapeAttr(zoneName)} LUA ${escapeAttr(ex.content)}</div>
+      </button>
+    `
+  ).join('');
+  container.querySelectorAll('.lua-example').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const ex = LUA_EXAMPLES[Number(btn.dataset.index)];
+      document.getElementById('lua-record-name').value = `${ex.name}.${zoneName}`;
+      document.getElementById('lua-record-content').value = ex.content;
+    });
+  });
+}
+
 function openZoneEditor(zoneId, zoneName) {
   currentZoneId = zoneId;
   document.getElementById('zones-overview').hidden = true;
@@ -241,6 +279,9 @@ function openZoneEditor(zoneId, zoneName) {
   document.getElementById('zone-editor-name').textContent = zoneName;
   document.getElementById('record-form').reset();
   document.getElementById('record-ttl').value = 3600;
+  document.getElementById('lua-record-form').reset();
+  document.getElementById('lua-record-ttl').value = 300;
+  renderLuaExamples(zoneName);
   loadZoneRecords();
 }
 
@@ -288,6 +329,12 @@ async function loadZoneRecords() {
 
     tbody.querySelectorAll('.record-edit-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
+        if (btn.dataset.type === 'LUA') {
+          document.getElementById('lua-record-name').value = btn.dataset.name;
+          document.getElementById('lua-record-ttl').value = btn.dataset.ttl;
+          document.getElementById('lua-record-content').value = btn.dataset.content;
+          return;
+        }
         document.getElementById('record-name').value = btn.dataset.name;
         document.getElementById('record-type').value = btn.dataset.type;
         document.getElementById('record-ttl').value = btn.dataset.ttl;
@@ -333,6 +380,29 @@ document.getElementById('record-form').addEventListener('submit', async (e) => {
     await api(`/zones/${encodeURIComponent(currentZoneId)}/rrset`, {
       method: 'PUT',
       body: JSON.stringify({ name, type, ttl, records }),
+    });
+    successEl.textContent = t('record_saved');
+    successEl.hidden = false;
+    loadZoneRecords();
+  } catch (err) {
+    errorEl.textContent = `${t('record_error')}: ${err.message}`;
+    errorEl.hidden = false;
+  }
+});
+
+document.getElementById('lua-record-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('lua-record-name').value;
+  const ttl = document.getElementById('lua-record-ttl').value;
+  const content = document.getElementById('lua-record-content').value;
+  const errorEl = document.getElementById('lua-record-error');
+  const successEl = document.getElementById('lua-record-success');
+  errorEl.hidden = true;
+  successEl.hidden = true;
+  try {
+    await api(`/zones/${encodeURIComponent(currentZoneId)}/rrset`, {
+      method: 'PUT',
+      body: JSON.stringify({ name, type: 'LUA', ttl, records: [content] }),
     });
     successEl.textContent = t('record_saved');
     successEl.hidden = false;

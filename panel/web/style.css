@@ -277,6 +277,36 @@ nav {
   line-height: 1.6;
 }
 
+.lua-example {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-family: var(--sans);
+}
+
+.lua-example:hover {
+  border-color: var(--accent);
+}
+
+.lua-example .lua-example-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.lua-example .lua-example-code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  word-break: break-all;
+}
+
 table.zones {
   width: 100%;
   border-collapse: collapse;

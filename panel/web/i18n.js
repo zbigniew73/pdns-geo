@@ -60,6 +60,8 @@
       save_record_btn: 'Zapisz rekord',
       record_saved: 'Rekord zapisany.',
       record_error: 'Blad zapisu rekordu',
+      add_lua_record_title: 'Dodaj / edytuj rekord LUA',
+      lua_record_hint: 'Trescia rekordu LUA jest docelowy typ (np. A) plus wyrazenie Lua w cudzyslowie - dokladnie tak jak w przykladach ponizej.',
       delete_record_confirm: 'Usunac ten rekord?',
 
       dns_servers_title: 'Serwery DNS',
@@ -175,6 +177,8 @@
       save_record_btn: 'Save record',
       record_saved: 'Record saved.',
       record_error: 'Failed to save record',
+      add_lua_record_title: 'Add / edit LUA record',
+      lua_record_hint: 'The content of a LUA record is the target type (e.g. A) plus a Lua expression in quotes - exactly like in the examples below.',
       delete_record_confirm: 'Delete this record?',
 
       dns_servers_title: 'DNS Servers',
