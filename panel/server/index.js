@@ -11,6 +11,7 @@ const settingsRouter = require('./routes/settings');
 
 const db = initDb();
 const app = express();
+app.disable('x-powered-by');
 
 // Za Caddy (reverse proxy) - potrzebne, zeby express-session widzialo
 // polaczenie jako "secure" na podstawie X-Forwarded-Proto.
