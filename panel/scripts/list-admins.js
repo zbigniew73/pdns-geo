@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-// Diagnostyka: pokazuje, jakie konta faktycznie sa w bazie panelu.
-// Uzycie (z /opt/pdns-panel): node scripts/list-users.js
 const fs = require('fs');
 const Database = require('better-sqlite3');
 const config = require('../server/config');
@@ -13,12 +11,12 @@ if (!fs.existsSync(config.dbPath)) {
 
 const db = new Database(config.dbPath, { readonly: true });
 const rows = db
-  .prepare("SELECT id, email, role, must_change_password, pin_enabled, created_at FROM users WHERE role = 'user' ORDER BY id")
+  .prepare("SELECT id, email, role, must_change_password, pin_enabled, created_at FROM users WHERE role = 'admin' ORDER BY id")
   .all();
 
 console.log(`Baza: ${config.dbPath}`);
 if (!rows.length) {
-  console.log("Brak kont z rola 'user' w tabeli users.");
+  console.log("Brak kont z rola 'admin' w tabeli users.");
 } else {
   console.table(rows);
 }
