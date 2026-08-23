@@ -286,7 +286,7 @@ function openZoneEditor(zoneId, zoneName) {
   document.getElementById('record-form').reset();
   document.getElementById('record-ttl').value = 3600;
   document.getElementById('lua-record-form').reset();
-  document.getElementById('lua-record-ttl').value = 300;
+  document.getElementById('lua-record-ttl').value = 60;
   renderLuaExamples(zoneName);
   loadZoneRecords();
 }
