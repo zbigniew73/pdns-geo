@@ -301,6 +301,25 @@ nav {
   color: var(--accent);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .lua-example {
+    background: #0d2e2a;
+  }
+  :root:not([data-theme="light"]) .lua-example .lua-example-label,
+  :root:not([data-theme="light"]) .lua-example:hover .lua-example-label {
+    color: #ffffff;
+  }
+}
+
+:root[data-theme="dark"] .lua-example {
+  background: #0d2e2a;
+}
+
+:root[data-theme="dark"] .lua-example .lua-example-label,
+:root[data-theme="dark"] .lua-example:hover .lua-example-label {
+  color: #ffffff;
+}
+
 .lua-example .lua-example-code {
   display: block;
   font-family: var(--mono);
