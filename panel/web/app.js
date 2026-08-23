@@ -8,7 +8,7 @@ const views = {
   dashboard: document.getElementById('app'),
 };
 const userEmailEl = document.getElementById('user-email');
-const themeToggleBtn = document.getElementById('theme-toggle');
+const themeToggleBtns = document.querySelectorAll('.theme-toggle');
 const footerClockEls = document.querySelectorAll('.footer-clock');
 
 function escapeAttr(value) {
@@ -48,16 +48,19 @@ const MOON_ICON =
   '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 
 function updateThemeToggleIcon() {
-  themeToggleBtn.innerHTML = currentTheme() === 'dark' ? SUN_ICON : MOON_ICON;
+  const icon = currentTheme() === 'dark' ? SUN_ICON : MOON_ICON;
+  themeToggleBtns.forEach((btn) => (btn.innerHTML = icon));
 }
 
-themeToggleBtn.addEventListener('click', () => {
-  const next = currentTheme() === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  try {
-    localStorage.setItem('panel-theme', next);
-  } catch (e) {}
-  updateThemeToggleIcon();
+themeToggleBtns.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem('panel-theme', next);
+    } catch (e) {}
+    updateThemeToggleIcon();
+  });
 });
 
 updateThemeToggleIcon();
