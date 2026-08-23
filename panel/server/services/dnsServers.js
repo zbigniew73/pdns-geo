@@ -72,8 +72,7 @@ async function lookupLocation(ip) {
       const org = result.autonomous_system_organization ? ` ${result.autonomous_system_organization}` : '';
       asn = `AS${result.autonomous_system_number}${org}`;
     }
-  } catch {
-    }
+  } catch {}
 
   return [country, asn].filter(Boolean).join(' | ');
 }
