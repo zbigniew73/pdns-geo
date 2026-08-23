@@ -10,6 +10,12 @@ function normalizeName(name) {
   return String(name || '').toLowerCase().replace(/\.$/, '');
 }
 
+function countryFlag(iso) {
+  if (!/^[A-Za-z]{2}$/.test(iso || '')) return '';
+  const points = [...iso.toUpperCase()].map((c) => 0x1f1e6 + (c.charCodeAt(0) - 65));
+  return String.fromCodePoint(...points);
+}
+
 function makeResolver() {
   const resolver = new dns.promises.Resolver({ timeout: 5000, tries: 1 });
   resolver.setServers([PUBLIC_RESOLVER]);
@@ -73,7 +79,8 @@ async function lookupLocation(ip) {
     }
   } catch {}
 
-  return [country, timeZone, asn].filter(Boolean).join(' | ');
+  const countryText = country ? [countryFlag(country), country].filter(Boolean).join(' ') : '';
+  return [countryText, timeZone, asn].filter(Boolean).join(' | ');
 }
 
 async function getDnsServers() {
