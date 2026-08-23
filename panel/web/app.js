@@ -113,6 +113,12 @@ function switchTab(name) {
 
 tabs.forEach((tb) => tb.addEventListener('click', () => switchTab(tb.dataset.tab)));
 
+setInterval(() => {
+  if (!views.dashboard.hidden && activeTab === 'zones') {
+    loadSystemStats();
+  }
+}, 15000);
+
 async function api(path, options) {
   const res = await fetch(`/api${path}`, {
     headers: { 'Content-Type': 'application/json' },
