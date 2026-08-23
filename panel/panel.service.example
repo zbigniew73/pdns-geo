@@ -1,5 +1,5 @@
 [Unit]
-Description=pdns-geo panel (szkielet panelu do zarzadzania PowerDNS)
+Description=Panel do zarzadzania PowerDNS
 After=network.target
 
 [Service]
