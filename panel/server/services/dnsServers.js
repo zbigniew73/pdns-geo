@@ -53,7 +53,7 @@ async function lookupLocation(ip) {
 
   return {
     countryIso: country,
-    location: [country, timeZone].filter(Boolean).join(' | '),
+    location: [country, timeZone].filter(Boolean).join(' '),
   };
 }
 
