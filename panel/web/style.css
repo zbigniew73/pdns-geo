@@ -334,6 +334,12 @@ table.zones th, table.zones td {
   text-align: left;
   padding: 8px 10px;
   border-bottom: 1px solid var(--border);
+  word-break: break-word;
+}
+
+table.zones td:last-child {
+  white-space: nowrap;
+  word-break: normal;
 }
 
 table.zones th {
