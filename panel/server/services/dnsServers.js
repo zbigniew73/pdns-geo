@@ -17,10 +17,6 @@ function makeResolver() {
   return resolver;
 }
 
-// "online"/"offline" per serwer = czy on sam odpowiada na zapytanie DNS o
-// SOA strefy (jak `dig @<ip_serwera> <strefa> SOA`) - pytamy bezposrednio
-// jego wlasny adres, nie resolver publiczny. To dziala tak samo dla
-// primary i secondary, bez potrzeby posiadania klucza API do kazdego z nich.
 async function checkServerOnline(address, address6, zoneName) {
   const ip = address || address6;
   if (!ip) return 'unknown';
@@ -34,14 +30,6 @@ async function checkServerOnline(address, address6, zoneName) {
   }
 }
 
-// Bazy GeoIP2 sa duze - otwieramy je raz i trzymamy w pamieci procesu,
-// zamiast czytac plik przy kazdym zapytaniu. Jesli pliku nie ma (np.
-// maszyna deweloperska bez geoipupdate), dana czesc lokalizacji po prostu
-// zostaje pusta - to nie jest blad krytyczny dla reszty kafelka.
-// GeoLite2-City nie jest uzywana: darmowa baza dla adresow
-// hostingowych/serwerowniowych zwykle i tak nie zna miasta (tylko kraj z
-// duzym accuracy_radius) - Country.mmdb daje to samo mniejszym kosztem, a
-// ASN.mmdb dokladamy jako realna, dostepna informacje o dostawcy serwera.
 let countryLookupPromise = null;
 function getCountryLookup() {
   if (!countryLookupPromise) {
@@ -85,24 +73,11 @@ async function lookupLocation(ip) {
       asn = `AS${result.autonomous_system_number}${org}`;
     }
   } catch {
-    // baza ASN niedostepna - jedziemy dalej bez niej
-  }
+    }
 
   return [country, asn].filter(Boolean).join(' | ');
 }
 
-// Kafelek "Serwery DNS" nie czyta zadnego pliku ani nie zgaduje topologii -
-// za kazdym razem odpytuje prawdziwy DNS (jak `dig @8.8.8.8 <strefa> NS`)
-// o strefe referencyjna ustawiona w Ustawieniach (POWERDNS_NS_ZONE). Ile i
-// jakie serwery NS istnieja wynika z odpowiedzi resolvera - nie z zalozen.
-// Serwer, ktorego pierwsza etykieta nazwy to "ns1", jest traktowany jako
-// primary (konwencja nazewnictwa w tym wdrozeniu), reszta jako secondary.
-// Adresy IPv4/IPv6 kazdego serwera to kolejne, osobne zapytania DNS (A/AAAA),
-// lokalizacja to lookup w lokalnych bazach GeoIP2 po znalezionym adresie IP.
-// Status online/offline to bezposrednie zapytanie SOA do KAZDEGO serwera
-// (nie tylko primary) - patrz checkServerOnline(). Wersje PowerDNS dostaje
-// tylko wpis primary, bo to jedyny serwer, z ktorym panel ma bezposrednie
-// polaczenie do API zarzadzania (adres/klucz w Ustawieniach).
 async function getDnsServers() {
   if (!config.powerdns.nsZone) {
     return { configured: false, servers: [], error: 'zone_not_configured' };
