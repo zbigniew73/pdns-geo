@@ -12,7 +12,7 @@ if (!fs.existsSync(config.dbPath)) {
 }
 
 const db = new Database(config.dbPath, { readonly: true });
-const rows = db.prepare('SELECT id, email, role, must_change_password, created_at FROM users ORDER BY id').all();
+const rows = db.prepare('SELECT id, email, role, must_change_password, pin_enabled, created_at FROM users ORDER BY id').all();
 
 console.log(`Baza: ${config.dbPath}`);
 if (!rows.length) {
