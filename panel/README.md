@@ -36,13 +36,12 @@ zakładkę.
 
 Poniżej dwa kafelki obok siebie: "Strefy DNS" (lista stref z PowerDNS API,
 z przyciskiem "Edytuj" przy każdej) i "Serwery DNS" — lista ns1 (primary) +
-ns2/ns3/ns4 (secondary). Nazwy/role/adresy IP są ręcznie utrzymywane w
-`panel/server/config/dns-servers.json` (PowerDNS API nie zna topologii
-całego klastra — każdy serwer ma osobne, niepołączone ze sobą API). **Wpis
-`primary` dostaje żywy status/wersję** z faktycznie podłączonego API (ns1);
-ns2-ns4 zostają statyczne, dopóki nie dojdą osobne połączenia do nich.
-**Uzupełnij prawdziwe adresy IP** w tym pliku (pole `address` puste w
-szkielecie).
+ns2/ns3/ns4 (secondary). Nazwy/role/lokalizacje/adresy IPv4+IPv6 są ręcznie
+utrzymywane w `panel/server/config/dns-servers.json` (PowerDNS API nie zna
+topologii całego klastra — każdy serwer ma osobne, niepołączone ze sobą
+API). **Wpis `primary` dostaje żywy status/wersję** z faktycznie
+podłączonego API (ns1); ns2-ns4 zostają statyczne, dopóki nie dojdą osobne
+połączenia do nich.
 
 Kliknięcie "Edytuj" przy strefie otwiera na pełną szerokość edytor
 rekordów (`GET /api/zones/:zoneId`) z listą rrsetów i przyciskami

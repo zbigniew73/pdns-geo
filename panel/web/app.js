@@ -342,14 +342,16 @@ async function loadDnsServers() {
       .map((s) => {
         const roleLabel = s.role === 'primary' ? t('role_primary') : t('role_secondary');
         const address = s.address || t('address_unset');
+        const address6Text = s.address6 ? ` / ${s.address6}` : '';
+        const locationText = s.location ? ` <span class="server-address">(${s.location})</span>` : '';
         const statusBadge = s.status
           ? `<span class="badge ${s.status}">${t('status_' + s.status)}</span>`
           : '';
         const versionText = s.version ? ` <span class="server-address">v${s.version}</span>` : '';
         return `
           <div class="server-row">
-            <span class="server-name">${s.name} <span class="badge ${s.role}">${roleLabel}</span> ${statusBadge}</span>
-            <span class="server-address">${address}${versionText}</span>
+            <span class="server-name">${s.name}${locationText} <span class="badge ${s.role}">${roleLabel}</span> ${statusBadge}</span>
+            <span class="server-address">${address}${address6Text}${versionText}</span>
           </div>
         `;
       })
