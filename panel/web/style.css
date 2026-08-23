@@ -281,29 +281,36 @@ nav {
   display: block;
   width: 100%;
   text-align: left;
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: rgba(18, 165, 148, 0.08);
+  border: 1px solid rgba(18, 165, 148, 0.35);
   border-radius: 8px;
-  padding: 8px 10px;
+  padding: 10px 12px;
   margin-bottom: 8px;
   cursor: pointer;
   font-family: var(--sans);
 }
 
 .lua-example:hover {
+  background: rgba(18, 165, 148, 0.15);
   border-color: var(--accent);
 }
 
 .lua-example .lua-example-label {
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 6px;
 }
 
 .lua-example .lua-example-code {
+  display: block;
   font-family: var(--mono);
   font-size: 12px;
   color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
   word-break: break-all;
 }
 
