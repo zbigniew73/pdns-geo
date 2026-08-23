@@ -1,7 +1,5 @@
 const fs = require('fs');
 
-// Aktualizuje/dodaje wskazane klucze w pliku .env, zachowujac reszte pliku
-// (komentarze, kolejnosc, puste linie) bez zmian.
 function setEnvValues(filePath, updates) {
   const lines = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8').split('\n') : [];
   const seen = new Set();
