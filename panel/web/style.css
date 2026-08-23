@@ -459,6 +459,7 @@ textarea.field-input {
   height: 12px;
   vertical-align: middle;
   border-radius: 2px;
+  margin-left: 4px;
   margin-right: 4px;
 }
 
