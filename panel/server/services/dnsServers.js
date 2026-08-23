@@ -4,7 +4,8 @@ const config = require('../config');
 const powerdnsApi = require('./powerdnsApi');
 
 const PUBLIC_RESOLVER = '8.8.8.8';
-const GEOIP_DB_PATH = process.env.GEOIP_DB_PATH || '/usr/share/GeoIP/GeoLite2-City.mmdb';
+const GEOIP_COUNTRY_DB_PATH = process.env.GEOIP_COUNTRY_DB_PATH || '/usr/share/GeoIP/GeoLite2-Country.mmdb';
+const GEOIP_ASN_DB_PATH = process.env.GEOIP_ASN_DB_PATH || '/usr/share/GeoIP/GeoLite2-ASN.mmdb';
 
 function normalizeName(name) {
   return String(name || '').toLowerCase().replace(/\.$/, '');
@@ -16,33 +17,61 @@ function makeResolver() {
   return resolver;
 }
 
-// Baza GeoIP2 jest duza (dziesiatki MB) - otwieramy ja raz i trzymamy w
-// pamieci procesu, zamiast czytac plik przy kazdym zapytaniu. Jesli pliku
-// nie ma (np. maszyna deweloperska bez geoipupdate), lokalizacje po prostu
-// zostaja puste - to nie jest blad krytyczny dla reszty kafelka.
-let geoipLookupPromise = null;
-function getGeoipLookup() {
-  if (!geoipLookupPromise) {
-    geoipLookupPromise = maxmind.open(GEOIP_DB_PATH).catch((err) => {
-      geoipLookupPromise = null;
+// Bazy GeoIP2 sa duze - otwieramy je raz i trzymamy w pamieci procesu,
+// zamiast czytac plik przy kazdym zapytaniu. Jesli pliku nie ma (np.
+// maszyna deweloperska bez geoipupdate), dana czesc lokalizacji po prostu
+// zostaje pusta - to nie jest blad krytyczny dla reszty kafelka.
+// GeoLite2-City nie jest uzywana: darmowa baza dla adresow
+// hostingowych/serwerowniowych zwykle i tak nie zna miasta (tylko kraj z
+// duzym accuracy_radius) - Country.mmdb daje to samo mniejszym kosztem, a
+// ASN.mmdb dokladamy jako realna, dostepna informacje o dostawcy serwera.
+let countryLookupPromise = null;
+function getCountryLookup() {
+  if (!countryLookupPromise) {
+    countryLookupPromise = maxmind.open(GEOIP_COUNTRY_DB_PATH).catch((err) => {
+      countryLookupPromise = null;
       throw err;
     });
   }
-  return geoipLookupPromise;
+  return countryLookupPromise;
+}
+
+let asnLookupPromise = null;
+function getAsnLookup() {
+  if (!asnLookupPromise) {
+    asnLookupPromise = maxmind.open(GEOIP_ASN_DB_PATH).catch((err) => {
+      asnLookupPromise = null;
+      throw err;
+    });
+  }
+  return asnLookupPromise;
 }
 
 async function lookupLocation(ip) {
   if (!ip) return '';
+
+  let country = '';
   try {
-    const lookup = await getGeoipLookup();
+    const lookup = await getCountryLookup();
     const result = lookup.get(ip);
-    if (!result) return '';
-    const city = result.city && result.city.names && result.city.names.en;
-    const country = result.country && result.country.iso_code;
-    return [country, city].filter(Boolean).join(' | ');
+    country = (result && result.country && result.country.iso_code) || '';
   } catch {
-    return '';
+    // baza kraju niedostepna - jedziemy dalej bez niej
   }
+
+  let asn = '';
+  try {
+    const lookup = await getAsnLookup();
+    const result = lookup.get(ip);
+    if (result && result.autonomous_system_number) {
+      const org = result.autonomous_system_organization ? ` ${result.autonomous_system_organization}` : '';
+      asn = `AS${result.autonomous_system_number}${org}`;
+    }
+  } catch {
+    // baza ASN niedostepna - jedziemy dalej bez niej
+  }
+
+  return [country, asn].filter(Boolean).join(' | ');
 }
 
 // Kafelek "Serwery DNS" nie czyta zadnego pliku ani nie zgaduje topologii -
