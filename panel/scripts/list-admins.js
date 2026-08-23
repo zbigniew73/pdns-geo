@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs');
-const Database = require('better-sqlite3');
 const config = require('../server/config');
+const { openDb } = require('../server/db');
 
 if (!fs.existsSync(config.dbPath)) {
   console.error(`Brak pliku bazy: ${config.dbPath}`);
@@ -9,7 +9,7 @@ if (!fs.existsSync(config.dbPath)) {
   process.exit(1);
 }
 
-const db = new Database(config.dbPath, { readonly: true });
+const db = openDb({ readonly: true });
 const rows = db
   .prepare("SELECT id, email, role, must_change_password, pin_enabled, created_at FROM users WHERE role = 'admin' ORDER BY id")
   .all();

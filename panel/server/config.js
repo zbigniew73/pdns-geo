@@ -7,6 +7,7 @@ module.exports = {
   host: process.env.HOST || '127.0.0.1',
   sessionSecret: process.env.SESSION_SECRET || 'zmien-mnie-na-losowy-sekret',
   dbPath: process.env.DB_PATH || path.join(__dirname, '..', 'data', 'panel.db'),
+  dbEncryptionKey: process.env.DB_ENCRYPTION_KEY || '',
   adminEmail: process.env.ADMIN_EMAIL || 'panel@pdnstest.pl',
   adminPassword: process.env.ADMIN_PASSWORD || 'pass123!',
   powerdns: {

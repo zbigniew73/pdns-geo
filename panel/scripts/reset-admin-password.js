@@ -5,8 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
-const Database = require('better-sqlite3');
-const config = require('../server/config');
+const { openDb } = require('../server/db');
 
 const [, , email, newPassword] = process.argv;
 if (!email || !newPassword) {
@@ -18,8 +17,7 @@ if (newPassword.length < 8) {
   process.exit(1);
 }
 
-fs.mkdirSync(path.dirname(config.dbPath), { recursive: true });
-const db = new Database(config.dbPath);
+const db = openDb();
 db.exec(fs.readFileSync(path.join(__dirname, '..', 'server', 'db', 'schema.sql'), 'utf8'));
 
 const hash = bcrypt.hashSync(newPassword, 10);
