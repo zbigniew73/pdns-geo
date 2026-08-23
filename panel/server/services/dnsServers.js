@@ -4,7 +4,7 @@ const config = require('../config');
 const powerdnsApi = require('./powerdnsApi');
 
 const PUBLIC_RESOLVER = '8.8.8.8';
-const GEOIP_COUNTRY_DB_PATH = process.env.GEOIP_COUNTRY_DB_PATH || '/usr/share/GeoIP/GeoLite2-Country.mmdb';
+const GEOIP_CITY_DB_PATH = process.env.GEOIP_CITY_DB_PATH || '/usr/share/GeoIP/GeoLite2-City.mmdb';
 const GEOIP_ASN_DB_PATH = process.env.GEOIP_ASN_DB_PATH || '/usr/share/GeoIP/GeoLite2-ASN.mmdb';
 
 function normalizeName(name) {
@@ -30,15 +30,15 @@ async function checkServerOnline(address, address6, zoneName) {
   }
 }
 
-let countryLookupPromise = null;
-function getCountryLookup() {
-  if (!countryLookupPromise) {
-    countryLookupPromise = maxmind.open(GEOIP_COUNTRY_DB_PATH).catch((err) => {
-      countryLookupPromise = null;
+let cityLookupPromise = null;
+function getCityLookup() {
+  if (!cityLookupPromise) {
+    cityLookupPromise = maxmind.open(GEOIP_CITY_DB_PATH).catch((err) => {
+      cityLookupPromise = null;
       throw err;
     });
   }
-  return countryLookupPromise;
+  return cityLookupPromise;
 }
 
 let asnLookupPromise = null;
@@ -56,13 +56,13 @@ async function lookupLocation(ip) {
   if (!ip) return '';
 
   let country = '';
+  let timeZone = '';
   try {
-    const lookup = await getCountryLookup();
+    const lookup = await getCityLookup();
     const result = lookup.get(ip);
     country = (result && result.country && result.country.iso_code) || '';
-  } catch {
-    // baza kraju niedostepna - jedziemy dalej bez niej
-  }
+    timeZone = (result && result.location && result.location.time_zone) || '';
+  } catch {}
 
   let asn = '';
   try {
@@ -74,7 +74,7 @@ async function lookupLocation(ip) {
     }
   } catch {}
 
-  return [country, asn].filter(Boolean).join(' | ');
+  return [country, timeZone, asn].filter(Boolean).join(' | ');
 }
 
 async function getDnsServers() {
