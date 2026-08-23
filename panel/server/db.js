@@ -69,9 +69,7 @@ function seedAdminIfEmpty(db) {
   db.prepare(
     'INSERT INTO users (email, password_hash, must_change_password, role) VALUES (?, ?, 1, ?)'
   ).run(config.adminEmail, hash, 'admin');
-  console.log(
-    `==> Utworzono konto admina ${config.adminEmail} (haslo tymczasowe - wymagana zmiana po zalogowaniu)`
-  );
+  console.log('==> Utworzono konto admina (haslo tymczasowe - wymagana zmiana po zalogowaniu)');
 }
 
 module.exports = { initDb, openDb };
