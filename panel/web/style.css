@@ -290,15 +290,15 @@ nav {
   font-family: var(--sans);
 }
 
-.lua-example:hover {
-  border-color: var(--accent);
-}
-
 .lua-example .lua-example-label {
   font-size: 13px;
   font-weight: 600;
   color: var(--text);
   margin-bottom: 6px;
+}
+
+.lua-example:hover .lua-example-label {
+  color: var(--accent);
 }
 
 .lua-example .lua-example-code {
