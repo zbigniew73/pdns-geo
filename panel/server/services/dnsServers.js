@@ -17,6 +17,23 @@ function makeResolver() {
   return resolver;
 }
 
+// "online"/"offline" per serwer = czy on sam odpowiada na zapytanie DNS o
+// SOA strefy (jak `dig @<ip_serwera> <strefa> SOA`) - pytamy bezposrednio
+// jego wlasny adres, nie resolver publiczny. To dziala tak samo dla
+// primary i secondary, bez potrzeby posiadania klucza API do kazdego z nich.
+async function checkServerOnline(address, address6, zoneName) {
+  const ip = address || address6;
+  if (!ip) return 'unknown';
+  try {
+    const resolver = new dns.promises.Resolver({ timeout: 3000, tries: 1 });
+    resolver.setServers([ip]);
+    await resolver.resolveSoa(zoneName);
+    return 'online';
+  } catch {
+    return 'offline';
+  }
+}
+
 // Bazy GeoIP2 sa duze - otwieramy je raz i trzymamy w pamieci procesu,
 // zamiast czytac plik przy kazdym zapytaniu. Jesli pliku nie ma (np.
 // maszyna deweloperska bez geoipupdate), dana czesc lokalizacji po prostu
@@ -81,10 +98,11 @@ async function lookupLocation(ip) {
 // Serwer, ktorego pierwsza etykieta nazwy to "ns1", jest traktowany jako
 // primary (konwencja nazewnictwa w tym wdrozeniu), reszta jako secondary.
 // Adresy IPv4/IPv6 kazdego serwera to kolejne, osobne zapytania DNS (A/AAAA),
-// lokalizacja to lookup w lokalnej bazie GeoIP2 (GeoLite2-City.mmdb) po
-// znalezionym adresie IP. Zywy status/wersje PowerDNS dostaje tylko wpis
-// primary, bo to jedyny serwer, z ktorym panel ma bezposrednie polaczenie
-// API (adres/klucz w Ustawieniach).
+// lokalizacja to lookup w lokalnych bazach GeoIP2 po znalezionym adresie IP.
+// Status online/offline to bezposrednie zapytanie SOA do KAZDEGO serwera
+// (nie tylko primary) - patrz checkServerOnline(). Wersje PowerDNS dostaje
+// tylko wpis primary, bo to jedyny serwer, z ktorym panel ma bezposrednie
+// polaczenie do API zarzadzania (adres/klucz w Ustawieniach).
 async function getDnsServers() {
   if (!config.powerdns.nsZone) {
     return { configured: false, servers: [], error: 'zone_not_configured' };
@@ -121,10 +139,10 @@ async function getDnsServers() {
         address,
         address6,
         location: await lookupLocation(address || address6),
+        status: await checkServerOnline(address, address6, zoneName),
       };
-      if (isPrimary) {
-        entry.status = test.ok ? 'online' : test.error === 'not_configured' ? 'unknown' : 'offline';
-        if (test.ok) entry.version = test.version;
+      if (isPrimary && test.ok) {
+        entry.version = test.version;
       }
       return entry;
     })

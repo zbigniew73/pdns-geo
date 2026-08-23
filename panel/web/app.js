@@ -261,7 +261,7 @@ async function loadZoneRecords() {
             <td>${allContent}</td>
             <td>
               <button type="button" class="secondary record-edit-btn" data-name="${rr.name}" data-type="${rr.type}" data-ttl="${rr.ttl}" data-content="${escapeAttr(editContent)}">${t('edit_btn')}</button>
-              <button type="button" class="secondary record-delete-btn" data-name="${rr.name}" data-type="${rr.type}">${t('delete_btn')}</button>
+              <button type="button" class="secondary danger record-delete-btn" data-name="${rr.name}" data-type="${rr.type}">${t('delete_btn')}</button>
             </td>
           </tr>
         `;

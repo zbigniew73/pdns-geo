@@ -161,6 +161,15 @@ header h1 { font-size: 16px; margin: 0; }
   font-size: 13px;
 }
 
+.secondary.danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.secondary.danger:hover {
+  background: rgba(192, 57, 43, 0.1);
+}
+
 .lang-switch-group {
   font-size: 12px;
 }
@@ -443,7 +452,7 @@ textarea.field-input {
 }
 
 .badge.primary { background: rgba(18, 165, 148, 0.15); color: var(--accent); }
-.badge.secondary { background: rgba(107, 122, 134, 0.15); color: var(--muted); }
+.badge.secondary { background: rgba(184, 134, 11, 0.15); color: var(--warn); }
 .badge.online { background: rgba(30, 142, 90, 0.15); color: var(--ok); }
 .badge.offline { background: rgba(192, 57, 43, 0.15); color: var(--danger); }
 .badge.unknown { background: rgba(107, 122, 134, 0.15); color: var(--muted); }
