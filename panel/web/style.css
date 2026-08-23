@@ -277,14 +277,18 @@ nav {
   line-height: 1.6;
 }
 
-.lua-example {
+.card button.lua-example {
   display: block;
   width: 100%;
   text-align: left;
   background: none;
+  color: inherit;
   border: none;
+  border-radius: 0;
   padding: 4px 0;
   margin-bottom: 6px;
+  font-size: inherit;
+  font-weight: normal;
   cursor: pointer;
   font-family: var(--sans);
 }
