@@ -59,9 +59,9 @@
 
       dns_servers_title: 'Serwery DNS',
       dns_servers_empty: 'Brak serwerow do pokazania.',
-      dns_servers_not_configured: 'Polaczenie z PowerDNS API nie jest jeszcze skonfigurowane (Ustawienia).',
       dns_servers_zone_not_configured: 'Nie ustawiono strefy NS w Ustawieniach (Polaczenie z PowerDNS API).',
-      dns_servers_no_ns_records: 'Skonfigurowana strefa nie ma rekordow NS przy apeksie.',
+      dns_servers_no_ns_records: 'Zapytanie DNS o NS dla tej strefy nie zwrocilo zadnych serwerow.',
+      dns_servers_dns_query_failed: 'Zapytanie DNS o serwery NS nie powiodlo sie: {message}',
       dns_servers_error: 'Blad pobierania listy serwerow.',
       role_primary: 'primary',
       role_secondary: 'secondary',
@@ -157,9 +157,9 @@
 
       dns_servers_title: 'DNS Servers',
       dns_servers_empty: 'No servers to show.',
-      dns_servers_not_configured: 'PowerDNS API connection is not configured yet (Settings).',
       dns_servers_zone_not_configured: 'No NS zone set in Settings (PowerDNS API connection).',
-      dns_servers_no_ns_records: 'The configured zone has no NS records at its apex.',
+      dns_servers_no_ns_records: 'The DNS query for NS records returned none for this zone.',
+      dns_servers_dns_query_failed: 'DNS query for NS servers failed: {message}',
       dns_servers_error: 'Failed to load the server list.',
       role_primary: 'primary',
       role_secondary: 'secondary',
