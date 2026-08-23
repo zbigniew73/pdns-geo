@@ -365,7 +365,7 @@ async function loadDnsServers() {
           ? `<img class="flag-icon" src="/flags/${s.countryIso.toLowerCase()}.svg" alt="" />`
           : '';
         const locationText = s.location
-          ? ` <span class="server-address">(${flagImg}${flagImg ? ' | ' : ''}${s.location})</span>`
+          ? ` <span class="server-address">(${flagImg ? ' ' + flagImg + ' | ' : ''}${s.location})</span>`
           : '';
         const statusBadge = s.status
           ? `<span class="badge ${s.status}">${t('status_' + s.status)}</span>`
