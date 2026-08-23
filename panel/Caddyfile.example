@@ -9,6 +9,7 @@ panel.domena.eu {
         Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
         Cross-Origin-Embedder-Policy "unsafe-none"
         Cross-Origin-Opener-Policy "same-origin-allow-popups"
+        Content-Security-Policy "upgrade-insecure-requests"
     }
 
     reverse_proxy 127.0.0.1:3000
