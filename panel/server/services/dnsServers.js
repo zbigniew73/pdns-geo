@@ -39,7 +39,7 @@ async function lookupLocation(ip) {
     if (!result) return '';
     const city = result.city && result.city.names && result.city.names.en;
     const country = result.country && result.country.iso_code;
-    return [city, country].filter(Boolean).join(', ');
+    return [country, city].filter(Boolean).join(' | ');
   } catch {
     return '';
   }
