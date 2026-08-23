@@ -290,34 +290,34 @@ nav {
 }
 
 .lua-example .lua-example-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 2px;
-}
-
-.lua-example:hover .lua-example-label {
-  color: var(--accent);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .lua-example .lua-example-label,
-  :root:not([data-theme="light"]) .lua-example:hover .lua-example-label {
-    color: #ffffff;
-  }
-}
-
-:root[data-theme="dark"] .lua-example .lua-example-label,
-:root[data-theme="dark"] .lua-example:hover .lua-example-label {
-  color: #ffffff;
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
 }
 
 .lua-example .lua-example-code {
   display: block;
   font-family: var(--mono);
-  font-size: 12px;
-  color: var(--muted);
+  font-size: 13px;
+  color: var(--text);
   word-break: break-all;
+}
+
+.lua-example:hover .lua-example-code {
+  color: var(--accent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .lua-example .lua-example-code,
+  :root:not([data-theme="light"]) .lua-example:hover .lua-example-code {
+    color: #ffffff;
+  }
+}
+
+:root[data-theme="dark"] .lua-example .lua-example-code,
+:root[data-theme="dark"] .lua-example:hover .lua-example-code {
+  color: #ffffff;
 }
 
 table.zones {
