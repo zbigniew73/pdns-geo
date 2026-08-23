@@ -162,12 +162,13 @@ header h1 { font-size: 16px; margin: 0; }
 }
 
 .secondary.danger {
+  background: var(--danger);
   border-color: var(--danger);
-  color: var(--danger);
+  color: #fff;
 }
 
 .secondary.danger:hover {
-  background: rgba(192, 57, 43, 0.1);
+  background: #a5311f;
 }
 
 .lang-switch-group {
