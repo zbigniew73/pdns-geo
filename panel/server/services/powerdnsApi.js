@@ -2,11 +2,6 @@ const config = require('../config');
 
 const FETCH_TIMEOUT_MS = 5000;
 
-// fetch() na nieosiagalny/nieroutowalny adres potrafi wisiec bardzo dlugo
-// (system TCP connect timeout) - dajemy krotki, jawny limit, zeby przycisk
-// "Testuj polaczenie" (i widok stref) nie zawiesily sie na minuty.
-// Bledy sieciowe Node'a (fetch failed) chowaja prawdziwy powod w err.cause -
-// wyciagamy go, bo samo "fetch failed" nic nie mowi administratorowi.
 function describeFetchError(err) {
   if (err.name === 'TimeoutError') return 'connection timeout';
   const cause = err.cause;
@@ -26,9 +21,6 @@ async function apiFetch(path, options = {}) {
   }
 }
 
-// Szkielet: dopoki POWERDNS_API_URL nie jest ustawione (laczenie VPS4 -> VPS1
-// jeszcze nie ustalone - patrz docs/architecture.md), zwracamy pusta liste
-// zamiast bledu, zeby panel dalo sie uruchomic i przetestowac logowanie.
 async function listZones() {
   if (!config.powerdns.apiUrl) {
     return { configured: false, zones: [] };
@@ -49,9 +41,6 @@ async function getZone(zoneId) {
   return res.json();
 }
 
-// rrset: { name, type, ttl?, changetype: 'REPLACE'|'DELETE', records? }
-// REPLACE tworzy rrset jesli nie istnieje albo nadpisuje istniejacy (edycja
-// = REPLACE pod tym samym name+type) - tak dziala PowerDNS API v1.
 async function patchRRset(zoneId, rrset) {
   const res = await apiFetch(`/api/v1/servers/localhost/zones/${encodeURIComponent(zoneId)}`, {
     method: 'PATCH',
@@ -80,11 +69,6 @@ async function testConnection() {
   }
 }
 
-// Odpowiednik `pdns_control notify <zone>` przez API: wysyla DNS NOTIFY do
-// wszystkich secondary. Podbijanie SOA (dawniej robione tu recznie, jak
-// `pdnsutil increase-serial`) NIE jest juz potrzebne - SOA-EDIT-API=INCREASE
-// jest ustawione na kazdej strefie i w default-soa-edit-api na primary, wiec
-// PowerDNS sam podbija serial przy kazdej zmianie rrsetu przez API.
 async function notifyZone(zoneId) {
   const res = await apiFetch(`/api/v1/servers/localhost/zones/${encodeURIComponent(zoneId)}/notify`, {
     method: 'PUT',
