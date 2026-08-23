@@ -251,6 +251,12 @@ const LUA_EXAMPLES = [
     name: 'api',
     content: "A \"ifportup(443, {'203.0.113.10','198.51.100.20'}, {backupSelector='random'})\"",
   },
+  {
+    label: 'CDN - kontynent + health-check node brzegowego + fallback',
+    name: 'cdn',
+    content:
+      "A \"ifcontinent({'EU'}, ifportup(443, {'203.0.113.11','203.0.113.12'}, {backupSelector='random'}), ifcontinent({'NA'}, ifportup(443, {'198.51.100.11','198.51.100.21'}, {backupSelector='random'}), '192.0.2.100'))\"",
+  },
 ];
 
 function renderLuaExamples(zoneName) {
