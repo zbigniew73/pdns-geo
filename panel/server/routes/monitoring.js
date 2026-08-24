@@ -2,7 +2,8 @@ const express = require('express');
 const { requireAuth, requirePasswordChanged } = require('../middleware/requireAuth');
 const { requireMonitoringToken } = require('../middleware/requireMonitoringToken');
 const { recordMetrics, getLatestMetrics } = require('../services/monitoring');
-const { isKnownNsIp } = require('../services/dnsServers');
+const { isKnownNsIp, getZoneSerials } = require('../services/dnsServers');
+const config = require('../config');
 
 module.exports = function monitoringRouter(db) {
   const router = express.Router();
@@ -27,8 +28,17 @@ module.exports = function monitoringRouter(db) {
     res.json({ ok: true });
   });
 
-  router.get('/', requireAuth, requirePasswordChanged, (req, res) => {
-    res.json({ hosts: getLatestMetrics(db) });
+  router.get('/', requireAuth, requirePasswordChanged, async (req, res) => {
+    const hosts = getLatestMetrics(db);
+    const { serials, primarySerial } = await getZoneSerials(config.powerdns.nsZone);
+
+    const merged = hosts.map((h) => {
+      const serial = Object.prototype.hasOwnProperty.call(serials, h.host) ? serials[h.host] : null;
+      const inSync = serial !== null && primarySerial !== null ? serial === primarySerial : null;
+      return { ...h, serial, inSync };
+    });
+
+    res.json({ hosts: merged, zone: config.powerdns.nsZone || null, primarySerial });
   });
 
   return router;

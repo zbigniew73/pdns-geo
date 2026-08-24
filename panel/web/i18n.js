@@ -83,6 +83,8 @@
       monitoring_error: 'Blad pobierania danych monitoringu.',
       monitoring_fresh: 'aktualne',
       monitoring_stale: 'nieaktualne',
+      monitoring_in_sync: 'serial OK',
+      monitoring_out_of_sync: 'serial rozjechany',
 
       admin_info_title: 'Informacje Administratora',
       current_email_label: 'Aktualny e-mail',
@@ -207,6 +209,8 @@
       monitoring_error: 'Failed to load monitoring data.',
       monitoring_fresh: 'fresh',
       monitoring_stale: 'stale',
+      monitoring_in_sync: 'serial OK',
+      monitoring_out_of_sync: 'serial mismatch',
 
       admin_info_title: 'Administrator Information',
       current_email_label: 'Current email',

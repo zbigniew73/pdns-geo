@@ -496,10 +496,17 @@ async function loadMonitoring() {
         const badgeLabel = h.stale ? t('monitoring_stale') : t('monitoring_fresh');
         const qpsText = h.qps === null || h.qps === undefined ? '-' : h.qps.toFixed(2);
         const loadText = h.load1 === null || h.load1 === undefined ? '-' : h.load1;
+        const serialText = h.serial === null || h.serial === undefined ? '-' : h.serial;
+        const syncBadge =
+          h.inSync === null
+            ? ''
+            : h.inSync
+            ? `<span class="badge online">${t('monitoring_in_sync')}</span>`
+            : `<span class="badge offline">${t('monitoring_out_of_sync')}</span>`;
         return `
           <div class="server-row">
-            <span class="server-name">${h.host} <span class="badge ${badgeClass}">${badgeLabel}</span></span>
-            <span class="server-address">QPS: ${qpsText} &middot; RAM: ${fmtBytes(h.memBytes)} &middot; load: ${loadText} &middot; uptime: ${fmtUptime(h.uptimeSeconds)}</span>
+            <span class="server-name">${h.host} <span class="badge ${badgeClass}">${badgeLabel}</span> ${syncBadge}</span>
+            <span class="server-address">QPS: ${qpsText} &middot; RAM: ${fmtBytes(h.memBytes)} &middot; load: ${loadText} &middot; uptime: ${fmtUptime(h.uptimeSeconds)} &middot; serial: ${serialText}</span>
           </div>
         `;
       })

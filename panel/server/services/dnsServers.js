@@ -125,4 +125,43 @@ async function isKnownNsIp(ip) {
   return addresses.flat().includes(ip);
 }
 
-module.exports = { getDnsServers, isKnownNsIp };
+async function getZoneSerial(ip, zoneName) {
+  if (!ip) return null;
+  try {
+    const resolver = new dns.promises.Resolver({ timeout: 3000, tries: 1 });
+    resolver.setServers([ip]);
+    const soa = await resolver.resolveSoa(zoneName);
+    return soa.serial;
+  } catch {
+    return null;
+  }
+}
+
+async function getZoneSerials(zoneNameRaw) {
+  if (!zoneNameRaw) return { serials: {}, primaryHost: null, primarySerial: null };
+
+  const zoneName = normalizeName(zoneNameRaw);
+  const resolver = makeResolver();
+
+  let nsHosts;
+  try {
+    nsHosts = (await resolver.resolveNs(zoneName)).map(normalizeName).sort();
+  } catch {
+    return { serials: {}, primaryHost: null, primarySerial: null };
+  }
+
+  const primaryHost = nsHosts.find((h) => h.split('.')[0] === 'ns1') || nsHosts[0] || null;
+
+  const entries = await Promise.all(
+    nsHosts.map(async (host) => {
+      const [v4, v6] = await Promise.allSettled([resolver.resolve4(host), resolver.resolve6(host)]);
+      const ip = v4.status === 'fulfilled' ? v4.value[0] : v6.status === 'fulfilled' ? v6.value[0] : '';
+      return [host, await getZoneSerial(ip, zoneName)];
+    })
+  );
+
+  const serials = Object.fromEntries(entries);
+  return { serials, primaryHost, primarySerial: primaryHost ? serials[primaryHost] : null };
+}
+
+module.exports = { getDnsServers, isKnownNsIp, getZoneSerials };
