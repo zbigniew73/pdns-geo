@@ -100,4 +100,29 @@ async function getDnsServers() {
   return { configured: true, servers };
 }
 
-module.exports = { getDnsServers };
+async function isKnownNsIp(ip) {
+  if (!ip || !config.powerdns.nsZone) return false;
+  const zoneName = normalizeName(config.powerdns.nsZone);
+  const resolver = makeResolver();
+
+  let nsHosts;
+  try {
+    nsHosts = await resolver.resolveNs(zoneName);
+  } catch {
+    return false;
+  }
+
+  const addresses = await Promise.all(
+    nsHosts.map(async (host) => {
+      const [v4, v6] = await Promise.allSettled([resolver.resolve4(host), resolver.resolve6(host)]);
+      return [
+        ...(v4.status === 'fulfilled' ? v4.value : []),
+        ...(v6.status === 'fulfilled' ? v6.value : []),
+      ];
+    })
+  );
+
+  return addresses.flat().includes(ip);
+}
+
+module.exports = { getDnsServers, isKnownNsIp };

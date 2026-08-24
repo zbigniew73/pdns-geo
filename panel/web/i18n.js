@@ -78,6 +78,12 @@
       status_offline: 'offline',
       status_unknown: 'nieznany',
 
+      monitoring_title: 'Monitoring',
+      monitoring_empty: 'Brak danych - serwery jeszcze nie wyslaly statystyk.',
+      monitoring_error: 'Blad pobierania danych monitoringu.',
+      monitoring_fresh: 'aktualne',
+      monitoring_stale: 'nieaktualne',
+
       admin_info_title: 'Informacje Administratora',
       current_email_label: 'Aktualny e-mail',
       save_email_btn: 'Zapisz e-mail',
@@ -195,6 +201,12 @@
       status_online: 'online',
       status_offline: 'offline',
       status_unknown: 'unknown',
+
+      monitoring_title: 'Monitoring',
+      monitoring_empty: 'No data yet - servers have not sent statistics.',
+      monitoring_error: 'Failed to load monitoring data.',
+      monitoring_fresh: 'fresh',
+      monitoring_stale: 'stale',
 
       admin_info_title: 'Administrator Information',
       current_email_label: 'Current email',

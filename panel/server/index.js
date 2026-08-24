@@ -8,6 +8,7 @@ const zonesRouter = require('./routes/zones');
 const statsRouter = require('./routes/stats');
 const dnsServersRouter = require('./routes/dnsServers');
 const settingsRouter = require('./routes/settings');
+const monitoringRouter = require('./routes/monitoring');
 
 const db = initDb();
 const app = express();
@@ -32,6 +33,7 @@ app.use('/api/zones', zonesRouter());
 app.use('/api/stats', statsRouter());
 app.use('/api/dns-servers', dnsServersRouter());
 app.use('/api/settings', settingsRouter(db));
+app.use('/api/monitoring', monitoringRouter(db));
 app.use('/flags', express.static(path.join(__dirname, '..', 'node_modules', 'flag-icons', 'flags', '4x3')));
 app.use(express.static(path.join(__dirname, '..', 'web')));
 

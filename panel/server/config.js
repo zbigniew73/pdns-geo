@@ -15,4 +15,5 @@ module.exports = {
     apiKey: process.env.POWERDNS_API_KEY || '',
     nsZone: process.env.POWERDNS_NS_ZONE || '',
   },
+  monitoringToken: process.env.MONITORING_TOKEN || '',
 };

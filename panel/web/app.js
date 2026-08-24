@@ -83,6 +83,7 @@ document.querySelectorAll('.lang-switch[data-lang]').forEach((el) => {
       loadSystemStats();
       loadZones();
       loadDnsServers();
+      loadMonitoring();
     }
   });
 });
@@ -107,6 +108,7 @@ function switchTab(name) {
     loadSystemStats();
     loadZones();
     loadDnsServers();
+    loadMonitoring();
   }
   if (name === 'settings') loadSettingsInfo();
 }
@@ -116,6 +118,7 @@ tabs.forEach((tb) => tb.addEventListener('click', () => switchTab(tb.dataset.tab
 setInterval(() => {
   if (!views.dashboard.hidden && activeTab === 'zones') {
     loadSystemStats();
+    loadMonitoring();
   }
 }, 15000);
 
@@ -460,6 +463,49 @@ async function loadDnsServers() {
       .join('');
   } catch {
     statusEl.textContent = t('dns_servers_error');
+    statusEl.hidden = false;
+    listEl.innerHTML = '';
+  }
+}
+
+function fmtUptime(seconds) {
+  if (seconds === null || seconds === undefined) return '-';
+  const d = Math.floor(seconds / 86400);
+  const h = Math.floor((seconds % 86400) / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  if (d > 0) return `${d}d ${h}h`;
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+
+async function loadMonitoring() {
+  const statusEl = document.getElementById('monitoring-status');
+  const listEl = document.getElementById('monitoring-list');
+  try {
+    const result = await api('/monitoring');
+    if (!result.hosts.length) {
+      statusEl.textContent = t('monitoring_empty');
+      statusEl.hidden = false;
+      listEl.innerHTML = '';
+      return;
+    }
+    statusEl.hidden = true;
+    listEl.innerHTML = result.hosts
+      .map((h) => {
+        const badgeClass = h.stale ? 'offline' : 'online';
+        const badgeLabel = h.stale ? t('monitoring_stale') : t('monitoring_fresh');
+        const qpsText = h.qps === null || h.qps === undefined ? '-' : h.qps.toFixed(2);
+        const loadText = h.load1 === null || h.load1 === undefined ? '-' : h.load1;
+        return `
+          <div class="server-row">
+            <span class="server-name">${h.host} <span class="badge ${badgeClass}">${badgeLabel}</span></span>
+            <span class="server-address">QPS: ${qpsText} &middot; RAM: ${fmtBytes(h.memBytes)} &middot; load: ${loadText} &middot; uptime: ${fmtUptime(h.uptimeSeconds)}</span>
+          </div>
+        `;
+      })
+      .join('');
+  } catch {
+    statusEl.textContent = t('monitoring_error');
     statusEl.hidden = false;
     listEl.innerHTML = '';
   }
